@@ -1,1 +1,1 @@
-# restfulpropertykit
+# RestfulPropertyKit
