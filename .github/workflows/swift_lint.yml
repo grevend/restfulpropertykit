@@ -1,0 +1,22 @@
+name: Swift CI
+
+on: 
+  pull_request:
+    paths:
+    - '.github/workflows/swift_lint.yml'
+    - '**/*.swift'
+
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    - name: Run lint
+      uses: norio-nomura/action-swiftlint@3.2.1
+      with:
+        args: --strict
+      env:
+        WORKING_DIRECTORY: RestfulPropertyKit
