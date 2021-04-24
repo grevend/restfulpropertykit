@@ -17,11 +17,7 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
     - name: Install swift-doc
-      run: |
-        sudo chown -R $(whoami) $(brew --prefix)/*
-        brew fetch netpbm & brew fetch libxcb & brew fetch libx11 & brew fetch cairo & brew fetch gobject-introspection & brew fetch harfbuzz & brew fetch librsvg & brew fetch graphviz
-        brew install .github/brew/swift-doc-1.0.0-beta.6.catalina.bottle.tar.gz || true
-        brew postinstall swift-doc
+      run: brew install swiftdocorg/formulae/swift-doc
     - name: Generate documentation
       run: |
         rm -r -f docs
