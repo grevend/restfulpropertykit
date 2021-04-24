@@ -1,0 +1,35 @@
+name: Brew Swift Doc
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bottle:
+    runs-on: macos-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    - name: Download swift-doc source code
+      uses: actions/checkout@v2
+      with:
+        repository: SwiftDocOrg/swift-doc
+        ref: master
+        path: swift-doc
+    - name: Brew swift-doc
+      run: |
+        mv .github/brew/swift-doc.rb swift-doc/swift-doc.rb
+        cd swift-doc
+        brew install --build-bottle ./swift-doc.rb
+        brew bottle --force-core-tap ./swift-doc.rb
+        cd ..
+        mv swift-doc/swift-doc--1.0.0-beta.6.catalina.bottle.tar.gz .github/brew/swift-doc-1.0.0-beta.6.catalina.bottle.tar.gz
+    - name: Bottle swift-doc
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git stash --all
+        git checkout -b brew-${{ github.sha }}
+        git stash pop
+        git add .github/brew/swift-doc-1.0.0-beta.6.catalina.bottle.tar.gz
+        git commit -m "Brew bottle swift-doc"
+        git push --set-upstream origin brew-${{ github.sha }}
