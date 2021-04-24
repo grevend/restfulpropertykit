@@ -1,0 +1,46 @@
+name: Swift Doc
+
+on: 
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+    paths:
+    - '.github/workflows/swift_doc.yml'
+    - '**/*.swift'
+
+jobs:
+  generate:
+    if: github.event.pull_request.merged == true
+    runs-on: macos-latest
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    - name: Install swift-doc
+      run: |
+        sudo chown -R $(whoami) $(brew --prefix)/*
+        brew fetch netpbm & brew fetch libxcb & brew fetch libx11 & brew fetch cairo & brew fetch gobject-introspection & brew fetch harfbuzz & brew fetch librsvg & brew fetch graphviz
+        brew install .github/brew/swift-doc-1.0.0-beta.6.catalina.bottle.tar.gz || true
+        brew postinstall swift-doc
+    - name: Generate documentation
+      run: |
+        rm -r -f docs
+        mkdir -p docs
+        swift doc generate RestfulPropertyKit --module-name RestfulPropertyKit -o docs -f html --base-url https://github.com/grevend/restfulpropertykit/
+    - name: Generate wiki
+      run: |
+        rm -r -f .github/wiki
+        mkdir -p .github/wiki
+        swift doc generate RestfulPropertyKit --module-name RestfulPropertyKit -o .github/wiki -f commonmark --base-url https://github.com/grevend/restfulpropertykit/
+    - name: Publish documentation
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git stash --all
+        git checkout -b doc-${{ github.sha }}
+        git stash pop
+        git add --all docs/
+        git commit -m "Generate Swift documentation"
+        git add --all .github/wiki
+        git commit -m "Generate Swift wiki"
+        git push --set-upstream origin doc-${{ github.sha }}
