@@ -1138,7 +1138,7 @@ public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 /// - Since: Sprint 1
 public final class RestConfiguration {
     /// The URL host component.
-    static var host: String = ""
+    public static var host: String = ""
 }
 
 /// This structure constructs URLs according to RFC 3986.
