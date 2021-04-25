@@ -1,5 +1,5 @@
 //
-//  Rest.swift
+//  RestfulPropertyKit.swift
 //  RestfulPropertyKit
 //
 //  Created by David Greven on 12.04.21.
@@ -1532,4 +1532,3 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
 
 // swiftlint:enable line_length
 // swiftlint:enable file_length
-
