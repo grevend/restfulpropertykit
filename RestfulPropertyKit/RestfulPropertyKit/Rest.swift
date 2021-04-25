@@ -604,7 +604,7 @@ struct RestBearerType: Codable {
 /// }
 /// ~~~
 ///
-/// # References
+/// ### References
 /// [Property Wrapper](https://docs.swift.org/swift-book/LanguageGuide/Properties.html#ID617)
 ///
 /// [Key Paths](https://github.com/apple/swift-evolution/blob/master/proposals/0161-key-paths.md)
@@ -918,7 +918,7 @@ infix operator ++: AssignmentPrecedence
 /// `ParamKey` and `ParamValue` must conform to both `CustomStringConvertible`
 /// and `Hashable`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -949,7 +949,7 @@ postfix operator >?
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` and `Query.QueryValue` should equal `Parent` and `Value`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -976,7 +976,7 @@ postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> wh
 /// `Query.QueryParent.ChildCodable` must equal `Query.QueryValue`
 /// `Query.QueryValue` must equal `Value`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -1005,7 +1005,7 @@ postfix operator <!
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` and `Query.QueryValue` should equal `Parent` and `Value`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -1031,7 +1031,7 @@ postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> wh
 /// `Query.QueryParent.ChildCodable` must equal `Query.QueryValue`
 /// `Query.QueryValue` must equal `Value`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -1062,7 +1062,7 @@ infix operator <-: AssignmentPrecedence
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` and `Query.QueryValue` should equal `Parent` and `Value`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -1090,7 +1090,7 @@ func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> 
 /// `Query.QueryParent.ChildCodable` must equal `Query.QueryValue`.
 /// `Query.QueryValue` must equal `Value`.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -1116,7 +1116,7 @@ infix operator ??
 ///
 /// - Returns: A binding wrapping the original instance providing fallback logic.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
@@ -1130,7 +1130,7 @@ func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 
 /// This structure constructs URLs according to RFC 3986.
 ///
-/// # Reference
+/// ### Reference
 /// [RFC 3986](https://tools.ietf.org/html/rfc3986)
 ///
 /// - Since: Sprint 1
