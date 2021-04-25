@@ -32,7 +32,7 @@ let package = Package(
     products: [
         .library(
             name: "RestfulPropertyKit",
-            targets: ["RestfulPropertyKit"]),
+            targets: ["RestfulPropertyKit"])
     ],
     targets: [
         .target(
@@ -40,6 +40,6 @@ let package = Package(
             dependencies: []),
         .testTarget(
             name: "RestfulPropertyKitTests",
-            dependencies: ["RestfulPropertyKit"]),
+            dependencies: ["RestfulPropertyKit"])
     ]
 )
