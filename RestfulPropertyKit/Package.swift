@@ -5,7 +5,7 @@
 //  Package.swift
 //  RestfulPropertyKit
 //
-//  Created by David Greven on 12.04.21.
+//  Created by David Greven on 25.04.21.
 //  Copyright (c) 2021 David Greven. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
