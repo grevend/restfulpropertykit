@@ -26,7 +26,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#implementations">Implementations</a><ul><li class="function"><a href="#&lt;-">Query &lt;- Value where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue</a></li><li class="function"><a href="#&lt;-">Query &lt;- Value where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value</a></li></ul></li></ol>
+            <ol/>
         </div>
     </nav>
 
@@ -50,137 +50,13 @@
 
 </aside>
 </div>
-    <section id="implementations">
-        <h2>Implementations</h2>
-        <div role="article" class="function" id="<-">
-    <h3>
-      Query &lt;- Value
-      <small>where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue</small>
-    </h3>
-    <div class="declaration">
-<pre class="highlight"><code><span class="keyword">func</span> &lt;- &lt;<span class="variable">Query</span>, <span class="variable">Value</span>&gt;(<span class="variable">lhs</span>: <span class="type">Query</span>, <span class="variable">rhs</span>: <span class="type">Value</span>) -&gt; <span class="type">Future</span>&lt;<span class="type">Value</span>, <span class="type">RestQueryError</span>&gt; <span class="keyword">where</span> <span class="type">Query</span>: <span class="type">RestQuery</span>, <span class="type">Query</span>.<span class="type">QueryParent</span> == <span class="type">Query</span>.<span class="type">QueryValue</span>, <span class="type">Value</span> == <span class="type">Query</span>.<span class="type">QueryValue</span> </code></pre>
-</div>
-<div class="summary" role="doc-abstract">
-    <p>The query post new value operator.</p>
 
-</div>
-<div class="discussion">
-    <p>Makes a post request that will resolve to the new value or an error.</p>
-
-<p>Usage:</p>
-
-<html><body><pre class="highlight"><code><span class="keyword">let</span> <span class="variable">cancel</span> = (<span class="variable">$someQuery</span> &lt;- <span class="variable">someNewValue</span>).<span class="variable">sink</span>(...)
-</code></pre></body></html>
-<aside class="Requires">
-    <p>The query type <code>Query</code> must conform to the <code>RestQuery</code> protocol. <code>Query.QueryParent</code> and <code>Query.QueryValue</code> should equal <code>Parent</code> and <code>Value</code>.</p>
-
-</aside>
-<h1>Reference</h1>
-
-<p><a href="https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46">Custom Operators</a></p>
-
-<aside class="Since">
-    <p>Sprint 1</p>
-
-</aside>
-</div>
-<h4>Parameters</h4>
-
-<table class="parameters">
-  <thead hidden>
-  <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-  </tr>
-  </thead>
-  <tbody>
-    <tr>
-    <th>lhs</th>
-    <td><code class="type">Query</code></td>
-    <td><p>The query instance used to make the post request.</p>
-</td>
-</tr>
-<tr>
-    <th>rhs</th>
-    <td><code class="type">Value</code></td>
-    <td><p>The value that should be sent as the body part of the <code>HTTPS</code> request.</p>
-</td>
-</tr>
-  </tbody>
-</table>
-  <h4>Returns</h4>
-  <p>future that will resolve to the new value or an error.</p>
-
-</div>
-<div role="article" class="function" id="<-">
-    <h3>
-      Query &lt;- Value
-      <small>where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value</small>
-    </h3>
-    <div class="declaration">
-<pre class="highlight"><code><span class="keyword">func</span> &lt;- &lt;<span class="variable">Query</span>, <span class="variable">Value</span>&gt;(<span class="variable">lhs</span>: <span class="type">Query</span>, <span class="variable">rhs</span>: <span class="type">Value</span>) -&gt; <span class="type">Future</span>&lt;<span class="type">Value</span>, <span class="type">RestQueryError</span>&gt; <span class="keyword">where</span> <span class="type">Query</span>: <span class="type">RestQuery</span>, <span class="type">Query</span>.<span class="type">QueryParent</span>: <span class="type">ParentCodable</span>, <span class="type">Query</span>.<span class="type">QueryParent</span>.<span class="type">ChildCodable</span> == <span class="type">Query</span>.<span class="type">QueryValue</span>, <span class="type">Query</span>.<span class="type">QueryValue</span> == <span class="type">Value</span> </code></pre>
-</div>
-<div class="summary" role="doc-abstract">
-    <p>The query post new value operator.</p>
-
-</div>
-<div class="discussion">
-    <p>Makes a post request that will resolve to the new value or an error.</p>
-
-<p>Usage:</p>
-
-<html><body><pre class="highlight"><code><span class="keyword">let</span> <span class="variable">cancel</span> = (<span class="variable">$someQuery</span> &lt;- <span class="variable">someNewValue</span>).<span class="variable">sink</span>(...)
-</code></pre></body></html>
-<aside class="Requires">
-    <p>The query type <code>Query</code> must conform to the <code>RestQuery</code> protocol. <code>Query.QueryParent</code> must conform to the <code>ParentCodable</code> protocol. <code>Query.QueryParent.ChildCodable</code> must equal <code>Query.QueryValue</code>. <code>Query.QueryValue</code> must equal <code>Value</code>.</p>
-
-</aside>
-<h1>Reference</h1>
-
-<p><a href="https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46">Custom Operators</a></p>
-
-<aside class="Since">
-    <p>Sprint 1</p>
-
-</aside>
-</div>
-<h4>Parameters</h4>
-
-<table class="parameters">
-  <thead hidden>
-  <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-  </tr>
-  </thead>
-  <tbody>
-    <tr>
-    <th>lhs</th>
-    <td><code class="type">Query</code></td>
-    <td><p>The query instance used to make the post request.</p>
-</td>
-</tr>
-<tr>
-    <th>rhs</th>
-    <td><code class="type">Value</code></td>
-    <td><p>The value that should be send as the body part of the <code>HTTPS</code> request.</p>
-</td>
-</tr>
-  </tbody>
-</table>
-  <h4>Returns</h4>
-  <p>future that will resolve to the new value or an error.</p>
-
-</div>
-    </section>
         </article>
     </main>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-24T23:01:18+0000">April 24, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-04-25T12:47:35+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>
