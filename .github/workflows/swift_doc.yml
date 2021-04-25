@@ -22,12 +22,12 @@ jobs:
       run: |
         rm -r -f docs
         mkdir -p docs
-        swift doc generate RestfulPropertyKit --module-name RestfulPropertyKit -o docs -f html --base-url https://doc.restfulpropertykit.grevend.dev/
+        swift doc generate . --module-name RestfulPropertyKit -o docs -f html --base-url https://doc.restfulpropertykit.grevend.dev/
     - name: Generate wiki
       run: |
         rm -r -f .github/wiki
         mkdir -p .github/wiki
-        swift doc generate RestfulPropertyKit --module-name RestfulPropertyKit -o .github/wiki -f commonmark --base-url https://github.com/grevend/restfulpropertykit/wiki/
+        swift doc generate . --module-name RestfulPropertyKit -o .github/wiki -f commonmark --base-url https://github.com/grevend/restfulpropertykit/wiki/
     - name: Publish documentation
       run: |
         git config user.name github-actions
