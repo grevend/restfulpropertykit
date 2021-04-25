@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestfulPropertyKit - RestValueReference</title>
+    <link rel="stylesheet" type="text/css" href="https://doc.restfulpropertykit.grevend.dev/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="https://doc.restfulpropertykit.grevend.dev/">
+            <strong>
+                RestfulPropertyKit
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol><li><a href="#initializers">Initializers</a><ul><li class="initializer"><a href="#restvaluereference.init(value:)">init(value:​)</a></li></ul></li></ol>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+    <small>Class</small>
+    <code class="name">Rest​Value​Reference</code>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">class</span> <span class="type">RestValueReference</span>&lt;<span class="variable">Value</span>&gt; </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Class-based value wrapper to easily reference the value and avoid copying the data in certain
+contexts.</p>
+
+</div>
+<div class="discussion">
+    <p>The REST API uses this class and its mutable counterpart for passing the data of the <code>@Rest</code>
+property wrapper to internal logic, requiring a reference to the value even if it is a struct or enum.</p>
+
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+
+    <section id="initializers">
+        <h2>Initializers</h2>
+
+        <div role="article" class="initializer" id="restvaluereference.init(value:)">
+    <h3>
+        <code>init(value:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">init</span>(<span class="variable">value</span>: <span class="type">Value</span>) </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Returns a new instance of <em>RestValueReference</em> containing a value of type <code>Value</code>.</p>
+
+</div>
+<div class="discussion">
+    <aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>value</th>
+    <td><code class="type">Value</code></td>
+    <td><p>The value to be referenced.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>The newly created instance referencing the given value.</p>
+
+</div>
+    </section>
+
+
+
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-04-25T16:26:06+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>

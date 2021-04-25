@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestfulPropertyKit - Rest</title>
+    <link rel="stylesheet" type="text/css" href="https://doc.restfulpropertykit.grevend.dev/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="https://doc.restfulpropertykit.grevend.dev/">
+            <strong>
+                RestfulPropertyKit
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol><li><a href="#initializers">Initializers</a><ul><li class="initializer"><a href="#rest.init(wrappedvalue:path:bearer:)">init(wrapped​Value:​path:​bearer:​)</a></li><li class="initializer"><a href="#rest.init(wrappedvalue:path:params:bearer:)">init(wrapped​Value:​path:​params:​bearer:​)</a></li><li class="initializer"><a href="#rest.init(wrappedvalue:path:bearer:parent:prop:)">init(wrapped​Value:​path:​bearer:​parent:​prop:​)</a></li><li class="initializer"><a href="#rest.init(wrappedvalue:path:params:bearer:parent:prop:)">init(wrapped​Value:​path:​params:​bearer:​parent:​prop:​)</a></li></ul></li><li><a href="#properties">Properties</a><ul><li class="variable"><a href="#rest.wrappedvalue">wrapped​Value</a></li><li class="variable"><a href="#rest.projectedvalue">projected​Value</a></li></ul></li></ol>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+    <small>Structure</small>
+    <code class="name">Rest</code>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="attribute">@</span><span class="attribute">propertyWrapper</span> <span class="keyword">public</span> <span class="keyword">struct</span> <span class="type">Rest</span>&lt;<span class="variable">Parent</span>, <span class="variable">Value</span>&gt; <span class="keyword">where</span> <span class="type">Parent</span>: <span class="type">Codable</span>, <span class="type">Value</span>: <span class="type">Codable</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The <em>REST</em> property wrapper.</p>
+
+</div>
+<div class="discussion">
+    <p>Allows to send post and get requests with bearer authentication and values that are automatically
+type marshalled.</p>
+
+<p>Property access:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+
+...
+
+<span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruitoftheday</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">fruit</span>: <span class="type">Fruit</span> = <span class="variable">Fruit</span>(<span class="variable">name</span>: <span class="string literal">"</span><span class="string literal">strawberry</span><span class="string literal">"</span>, <span class="variable">size</span>: <span class="number literal">3</span>, <span class="variable">color</span>: <span class="string literal">"</span><span class="string literal">red</span><span class="string literal">"</span>)
+
+...
+
+<span class="variable">print</span>(<span class="variable">fruit</span>) <span class="comment">// wrappedValue access</span>
+<span class="variable">print</span>(<span class="variable">$fruit</span>.<span class="variable">wrappedValue</span>) <span class="comment">// wrappedValue access</span>
+
+<span class="variable">print</span>(<span class="variable">$fruit</span>) <span class="comment">// projectedValue (aka query) access</span>
+
+<span class="variable">print</span>(<span class="variable">$fruit</span>.<span class="variable">projectedValue</span>) <span class="comment">// nested projectedValue (aka binding) access</span>
+<span class="variable">print</span>(<span class="variable">$fruit</span>.<span class="variable">name</span>) <span class="comment">// nested projectedValue (aka binding) property (aka property binding) access</span>
+</code></pre></body></html>
+<p>Usage for authentication:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Account</span>: <span class="type">Codable</span> {
+    <span class="keyword">var</span> <span class="variable">email</span>: <span class="type">String</span>
+    <span class="keyword">var</span> <span class="variable">password</span>: <span class="type">String</span>
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">signin</span><span class="string literal">"</span>, <span class="variable">bearer</span>: <span class="keyword">false</span>) <span class="keyword">var</span> <span class="variable">account</span>: <span class="type">Account</span> = <span class="variable">Account</span>(<span class="variable">email</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>, <span class="variable">password</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>)
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Email placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">email</span>)
+        <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Password placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">password</span>)
+        <span class="variable">Button</span>(<span class="string literal">"</span><span class="string literal">Sign In</span><span class="string literal">"</span>) {
+            <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$account</span>&gt;?.<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span>}))
+        }
+    }
+}
+</code></pre></body></html>
+<p>Usage for get request:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruitoftheday</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">fruit</span>: <span class="type">Fruit</span> = <span class="variable">Fruit</span>(<span class="variable">name</span>: <span class="string literal">"</span><span class="string literal">strawberry</span><span class="string literal">"</span>, <span class="variable">size</span>: <span class="number literal">3</span>, <span class="variable">color</span>: <span class="string literal">"</span><span class="string literal">red</span><span class="string literal">"</span>)
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">Text</span>(<span class="variable">fruit</span>.<span class="variable">name</span>)
+            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruit</span>&gt;?
+                .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+    }
+}
+</code></pre></body></html>
+<p>Usage for get request with query parameters:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+<span class="keyword">struct</span> <span class="type">Fruits</span>: <span class="type">Codable</span> {
+    <span class="keyword">var</span> <span class="variable">values</span>: [<span class="type">Fruit</span>] = []
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruits</span><span class="string literal">"</span>, <span class="variable">params</span>: [<span class="string literal">"</span><span class="string literal">limit</span><span class="string literal">"</span>: <span class="number literal">10</span>]) <span class="keyword">var</span> <span class="variable">fruits</span>: <span class="type">Fruits</span> = <span class="variable">Fruits</span>()
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">Text</span>(<span class="variable">fruits</span>.<span class="variable">values</span>[<span class="number literal">0</span>].<span class="variable">name</span>)
+            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?
+               .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+   }
+}
+</code></pre></body></html>
+<p>Usage for get request with property key path:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+<span class="keyword">struct</span> <span class="type">Fruits</span>: <a href="https://doc.restfulpropertykit.grevend.dev/ParentCodable"><span class="type">ParentCodable</span></a> {
+    <span class="keyword">var</span> <span class="variable">values</span>: [<span class="type">Fruit</span>] = []
+
+    <span class="keyword">static</span> <span class="keyword">func</span> <span class="function">wrap</span>(<span class="variable">child</span>: [<span class="type">Fruit</span>]) -&gt; <span class="keyword">Self</span> {
+        <span class="keyword">return</span> <span class="variable">Fruits</span>(<span class="variable">values</span>: <span class="type">child</span>)
+    }
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruits</span><span class="string literal">"</span>, <span class="variable">parent</span>: <span class="type">Fruits</span>.<span class="keyword">self</span>, <span class="variable">prop</span>: \.<span class="variable">values</span>) <span class="keyword">var</span> <span class="variable">fruits</span>: [<span class="type">Fruit</span>] = []
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">Text</span>(<span class="variable">fruits</span>[<span class="number literal">0</span>].<span class="variable">name</span>)
+            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?
+               .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+    }
+}
+</code></pre></body></html>
+<p>Usage for get request with query parameters and property key path:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+<span class="keyword">struct</span> <span class="type">Fruits</span>: <a href="https://doc.restfulpropertykit.grevend.dev/ParentCodable"><span class="type">ParentCodable</span></a> {
+    <span class="keyword">var</span> <span class="variable">values</span>: [<span class="type">Fruit</span>] = []
+
+    <span class="keyword">static</span> <span class="keyword">func</span> <span class="function">wrap</span>(<span class="variable">child</span>: [<span class="type">Fruit</span>]) -&gt; <span class="keyword">Self</span> {
+        <span class="keyword">return</span> <span class="variable">Fruits</span>(<span class="variable">values</span>: <span class="type">child</span>)
+    }
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruits</span><span class="string literal">"</span>, <span class="variable">params</span>: [<span class="string literal">"</span><span class="string literal">limit</span><span class="string literal">"</span>: <span class="number literal">10</span>], <span class="variable">parent</span>: <span class="type">Fruits</span>.<span class="keyword">self</span>, <span class="variable">prop</span>: \.<span class="variable">values</span>) <span class="keyword">var</span> <span class="variable">fruits</span>: [<span class="type">Fruit</span>] = []
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">Text</span>(<span class="variable">fruits</span>[<span class="number literal">0</span>].<span class="variable">name</span>)
+            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?
+               .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+    }
+}
+</code></pre></body></html>
+<p>Usage for post request with existing value:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Account</span>: <span class="type">Codable</span> {
+    <span class="keyword">var</span> <span class="variable">email</span>: <span class="type">String</span>
+    <span class="keyword">var</span> <span class="variable">password</span>: <span class="type">String</span>
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">signup</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">account</span>: <span class="type">Account</span> = <span class="variable">Account</span>(<span class="variable">email</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>, <span class="variable">password</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>)
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Email placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">email</span>)
+        <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Password placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">password</span>)
+        <span class="variable">Button</span>(<span class="string literal">"</span><span class="string literal">Sign Up</span><span class="string literal">"</span>) {
+            <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$account</span>&lt;!
+                .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span>}))
+        }
+    }
+}
+</code></pre></body></html>
+<p>Usage for post request with new value:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Account</span>: <span class="type">Codable</span> {
+    <span class="keyword">var</span> <span class="variable">email</span>: <span class="type">String</span>
+    <span class="keyword">var</span> <span class="variable">password</span>: <span class="type">String</span>
+}
+
+<span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
+    <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">signup</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">account</span>: <span class="type">Account</span> = <span class="variable">Account</span>(<span class="variable">email</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>, <span class="variable">password</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>)
+
+    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
+
+    <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
+        <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Email placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">email</span>)
+        <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Password placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">password</span>)
+        <span class="variable">Button</span>(<span class="string literal">"</span><span class="string literal">Sign Up</span><span class="string literal">"</span>) {
+            <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: (<span class="keyword">self</span>.<span class="variable">$account</span> &lt;- <span class="variable">someNewAccount</span>)
+                .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span>}))
+        }
+    }
+}
+</code></pre></body></html>
+<h3>References</h3>
+
+<p><a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html#ID617">Property Wrapper</a></p>
+
+<p><a href="https://github.com/apple/swift-evolution/blob/master/proposals/0161-key-paths.md">Key Paths</a></p>
+
+<aside class="Requires">
+    <p>The parent type <code>Parent</code> and the value type <code>Value</code> must conform to protocol <code>Codable</code>.</p>
+
+</aside>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+
+    <section id="initializers">
+        <h2>Initializers</h2>
+
+        <div role="article" class="initializer" id="rest.init(wrappedvalue:path:bearer:)">
+    <h3>
+        <code>init(wrapped​Value:​path:​bearer:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">init</span>(<span class="variable">wrappedValue</span>: <span class="type">Value</span>, <span class="variable">path</span>: <span class="type">String</span>, <span class="variable">bearer</span>: <span class="type">Bool</span> = <span class="keyword">true</span>) <span class="keyword">where</span> <span class="type">Parent</span> == <span class="type">Value</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Creates a <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div class="discussion">
+    <p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="attribute">@</span><a href="https://doc.restfulpropertykit.grevend.dev/Rest"><span class="type">Rest</span></a>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">somePath</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">someProp</span>: <span class="type">SomeType</span> = <span class="variable">SomeType</span>(...)
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>wrapped​Value</th>
+    <td><code class="type">Value</code></td>
+    <td><p>The value wrapped by this property wrapper.</p>
+</td>
+</tr>
+<tr>
+    <th>path</th>
+    <td><code class="type">String</code></td>
+    <td><p>The url request path component.</p>
+</td>
+</tr>
+<tr>
+    <th>bearer</th>
+    <td><code class="type">Bool</code></td>
+    <td><p>True if the bearer token should be send as part of the request.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>A new <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div role="article" class="initializer" id="rest.init(wrappedvalue:path:params:bearer:)">
+    <h3>
+        <code>init(wrapped​Value:​path:​params:​bearer:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">init</span>&lt;<span class="variable">ParamKey</span>, <span class="variable">ParamValue</span>&gt;(<span class="variable">wrappedValue</span>: <span class="type">Value</span>, <span class="variable">path</span>: <span class="type">String</span>, <span class="variable">params</span>: [<span class="type">ParamKey</span>: <span class="type">ParamValue</span>], <span class="variable">bearer</span>: <span class="type">Bool</span> = <span class="keyword">true</span>) <span class="keyword">where</span> <span class="type">Parent</span> == <span class="type">Value</span>, <span class="type">ParamKey</span>: <span class="type">CustomStringConvertible</span>, <span class="type">ParamValue</span>: <span class="type">CustomStringConvertible</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Creates a <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div class="discussion">
+    <p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="attribute">@</span><a href="https://doc.restfulpropertykit.grevend.dev/Rest"><span class="type">Rest</span></a>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">somePath</span><span class="string literal">"</span>, <span class="variable">params</span>: [<span class="string literal">"</span><span class="string literal">someKey</span><span class="string literal">"</span>: <span class="type">someValue</span>]) <span class="keyword">var</span> <span class="variable">someProp</span>: <span class="type">SomeType</span> = <span class="variable">SomeType</span>(...)
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>wrapped​Value</th>
+    <td><code class="type">Value</code></td>
+    <td><p>The value wrapped by this property wrapper.</p>
+</td>
+</tr>
+<tr>
+    <th>path</th>
+    <td><code class="type">String</code></td>
+    <td><p>The url request path component.</p>
+</td>
+</tr>
+<tr>
+    <th>params</th>
+    <td><code class="type">[Param​Key:​ Param​Value]</code></td>
+    <td><p>The url request query parameter component.</p>
+</td>
+</tr>
+<tr>
+    <th>bearer</th>
+    <td><code class="type">Bool</code></td>
+    <td><p>True if the bearer token should be send as part of the request.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>A new <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div role="article" class="initializer" id="rest.init(wrappedvalue:path:bearer:parent:prop:)">
+    <h3>
+        <code>init(wrapped​Value:​path:​bearer:​parent:​prop:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">init</span>(<span class="variable">wrappedValue</span>: <span class="type">Value</span>, <span class="variable">path</span>: <span class="type">String</span>, <span class="variable">bearer</span>: <span class="type">Bool</span> = <span class="keyword">true</span>, <span class="variable">parent</span>: <span class="type">Parent</span>.<span class="type">Type</span>, <span class="variable">prop</span>: <span class="type">KeyPath</span>&lt;<span class="type">Parent</span>, <span class="type">Value</span>&gt;) <span class="keyword">where</span> <span class="type">Parent</span>: <span class="type">ParentCodable</span>, <span class="type">Parent</span>.<span class="type">ChildCodable</span> == <span class="type">Value</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Creates a <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div class="discussion">
+    <p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="attribute">@</span><a href="https://doc.restfulpropertykit.grevend.dev/Rest"><span class="type">Rest</span></a>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">somePath</span><span class="string literal">"</span>, <span class="variable">parent</span>: <span class="type">SomeParentType</span>.<span class="keyword">self</span>, <span class="variable">prop</span>: \.<span class="variable">somePropKey</span>) <span class="keyword">var</span> <span class="variable">someProp</span>: <span class="type">SomeType</span> = <span class="variable">SomeType</span>(...)
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>wrapped​Value</th>
+    <td><code class="type">Value</code></td>
+    <td><p>The value wrapped by this property wrapper.</p>
+</td>
+</tr>
+<tr>
+    <th>path</th>
+    <td><code class="type">String</code></td>
+    <td><p>The url request path component.</p>
+</td>
+</tr>
+<tr>
+    <th>bearer</th>
+    <td><code class="type">Bool</code></td>
+    <td><p>True if the bearer token should be send as part of the request.</p>
+</td>
+</tr>
+<tr>
+    <th>parent</th>
+    <td><code class="type">Parent.​Type</code></td>
+    <td><p>The parent type conforming to the <code>ParentCodable</code> protocol.</p>
+</td>
+</tr>
+<tr>
+    <th>prop</th>
+    <td><code class="type">Key​Path&lt;Parent, Value&gt;</code></td>
+    <td><p>The property to be extracted from the parent type.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>A new <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div role="article" class="initializer" id="rest.init(wrappedvalue:path:params:bearer:parent:prop:)">
+    <h3>
+        <code>init(wrapped​Value:​path:​params:​bearer:​parent:​prop:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">init</span>&lt;<span class="variable">ParamKey</span>, <span class="variable">ParamValue</span>&gt;(<span class="variable">wrappedValue</span>: <span class="type">Value</span>, <span class="variable">path</span>: <span class="type">String</span>, <span class="variable">params</span>: [<span class="type">ParamKey</span>: <span class="type">ParamValue</span>], <span class="variable">bearer</span>: <span class="type">Bool</span> = <span class="keyword">true</span>, <span class="variable">parent</span>: <span class="type">Parent</span>.<span class="type">Type</span>, <span class="variable">prop</span>: <span class="type">KeyPath</span>&lt;<span class="type">Parent</span>, <span class="type">Value</span>&gt;) <span class="keyword">where</span> <span class="type">ParamKey</span>: <span class="type">CustomStringConvertible</span>, <span class="type">ParamValue</span>: <span class="type">CustomStringConvertible</span>, <span class="type">Parent</span>: <span class="type">ParentCodable</span>, <span class="type">Parent</span>.<span class="type">ChildCodable</span> == <span class="type">Value</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Creates a <em>Rest</em> property wrapper instance.</p>
+
+</div>
+<div class="discussion">
+    <p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="attribute">@</span><a href="https://doc.restfulpropertykit.grevend.dev/Rest"><span class="type">Rest</span></a>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">somePath</span><span class="string literal">"</span>, <span class="variable">params</span>: [<span class="string literal">"</span><span class="string literal">someKey</span><span class="string literal">"</span>: <span class="type">someValue</span>], <span class="variable">parent</span>: <span class="type">SomeParentType</span>.<span class="keyword">self</span>, <span class="variable">prop</span>: \.<span class="variable">somePropKey</span>) <span class="keyword">var</span> <span class="variable">someProp</span>: <span class="type">SomeType</span> = <span class="variable">SomeType</span>(...)
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>wrapped​Value</th>
+    <td><code class="type">Value</code></td>
+    <td><p>The value wrapped by this property wrapper.</p>
+</td>
+</tr>
+<tr>
+    <th>path</th>
+    <td><code class="type">String</code></td>
+    <td><p>The url request path component.</p>
+</td>
+</tr>
+<tr>
+    <th>params</th>
+    <td><code class="type">[Param​Key:​ Param​Value]</code></td>
+    <td><p>The url request query parameter component.</p>
+</td>
+</tr>
+<tr>
+    <th>bearer</th>
+    <td><code class="type">Bool</code></td>
+    <td><p>True if the bearer token should be send as part of the request.</p>
+</td>
+</tr>
+<tr>
+    <th>parent</th>
+    <td><code class="type">Parent.​Type</code></td>
+    <td><p>The parent type conforming to the <code>ParentCodable</code> protocol.</p>
+</td>
+</tr>
+<tr>
+    <th>prop</th>
+    <td><code class="type">Key​Path&lt;Parent, Value&gt;</code></td>
+    <td><p>The property to be extracted from the parent type.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>A new <em>Rest</em> property wrapper instance.</p>
+
+</div>
+    </section>
+    <section id="properties">
+        <h2>Properties</h2>
+
+        <div role="article" class="variable" id="rest.wrappedvalue">
+    <h3>
+        <code>wrapped​Value</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">var</span> <span class="variable">wrappedValue</span>: <span class="type">Value</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Implicitly used computed property for <code>@propertyWrapper</code>.</p>
+
+</div>
+<div class="discussion">
+    <p>Provides access to the wrapped value.</p>
+
+<p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+
+...
+
+<span class="attribute">@</span><a href="https://doc.restfulpropertykit.grevend.dev/Rest"><span class="type">Rest</span></a>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruitoftheday</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">fruit</span>: <span class="type">Fruit</span> = <span class="variable">Fruit</span>(<span class="variable">name</span>: <span class="string literal">"</span><span class="string literal">strawberry</span><span class="string literal">"</span>, <span class="variable">size</span>: <span class="number literal">3</span>, <span class="variable">color</span>: <span class="string literal">"</span><span class="string literal">red</span><span class="string literal">"</span>)
+
+...
+
+<span class="variable">print</span>(<span class="variable">fruit</span>) <span class="comment">// wrappedValue access</span>
+<span class="variable">print</span>(<span class="variable">fruit</span>.<span class="variable">name</span>) <span class="comment">// wrappedValue property access</span>
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+</div>
+<div role="article" class="variable" id="rest.projectedvalue">
+    <h3>
+        <code>projected​Value</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">var</span> <span class="variable">projectedValue</span>: <span class="type">RestQueryImpl</span>&lt;<span class="type">Parent</span>, <span class="type">Value</span>&gt; </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Implicitly used computed property for <code>@propertyWrapper</code>.</p>
+
+</div>
+<div class="discussion">
+    <p>Provides access to the associated query. Visibility is set to <code>fileprivate</code> to restrict
+query mutations.</p>
+
+<p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Fruit</span>: <span class="type">Codable</span> {
+    <span class="keyword">let</span> <span class="variable">name</span>: <span class="type">String</span>
+    <span class="keyword">let</span> <span class="variable">size</span>: <span class="type">Int</span>
+    <span class="keyword">let</span> <span class="variable">color</span>: <span class="type">String</span>
+}
+
+...
+
+<span class="attribute">@</span><a href="https://doc.restfulpropertykit.grevend.dev/Rest"><span class="type">Rest</span></a>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruitoftheday</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">fruit</span>: <span class="type">Fruit</span> = <span class="variable">Fruit</span>(<span class="variable">name</span>: <span class="string literal">"</span><span class="string literal">strawberry</span><span class="string literal">"</span>, <span class="variable">size</span>: <span class="number literal">3</span>, <span class="variable">color</span>: <span class="string literal">"</span><span class="string literal">red</span><span class="string literal">"</span>)
+
+...
+
+<span class="variable">print</span>(<span class="variable">$fruit</span>) <span class="comment">// projectedValue (aka query) access</span>
+
+<span class="variable">print</span>(<span class="variable">$fruit</span>.<span class="variable">projectedValue</span>) <span class="comment">// nested projectedValue (aka binding) access</span>
+<span class="variable">print</span>(<span class="variable">$fruit</span>.<span class="variable">name</span>) <span class="comment">// nested projectedValue (aka binding) property (aka property binding) access</span>
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+</div>
+    </section>
+
+
+
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-04-25T16:26:07+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>

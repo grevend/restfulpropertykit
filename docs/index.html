@@ -26,13 +26,153 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#operators">Operators</a></li></ol>
+            <ol><li><a href="#classes">Classes</a></li><li><a href="#structures">Structures</a></li><li><a href="#enumerations">Enumerations</a></li><li><a href="#protocols">Protocols</a></li><li><a href="#operators">Operators</a></li></ol>
         </div>
     </nav>
 
     <main>
         <article>
-                <section id="operators">
+                <section id="classes">
+        <h2>Classes</h2>
+        <dl>
+            <dt class="class">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestValueReference" title="class - RestValueReference">
+        Rest​Value​Reference
+    </a>
+</dt>
+<dd>
+    <p>Class-based value wrapper to easily reference the value and avoid copying the data in certain
+contexts.</p>
+
+</dd>
+<dt class="class">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference" title="class - RestMutableValueReference">
+        Rest​Mutable​Value​Reference
+    </a>
+</dt>
+<dd>
+    <p>The mutable counterpart of <em>RestValueReference&lt;Value&gt;</em>. Subclassing is not possible since it is
+final and the value setter in <em>RestValueReference</em> is <code>fileprivate</code>.</p>
+
+</dd>
+<dt class="class">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestConfiguration" title="class - RestConfiguration">
+        Rest​Configuration
+    </a>
+</dt>
+<dd>
+    <p>Allows to configure the <em>REST API</em>.</p>
+
+</dd>
+<dt class="class">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestQueryImpl" title="class - RestQueryImpl">
+        Rest​Query​Impl
+    </a>
+</dt>
+<dd>
+    <p>An implementation of <em>RestQuery</em> protocol.</p>
+
+</dd>
+        </dl>
+    </section>
+    <section id="structures">
+        <h2>Structures</h2>
+        <dl>
+            <dt class="structure">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestBearerToken" title="structure - RestBearerToken">
+        Rest​Bearer​Token
+    </a>
+</dt>
+<dd>
+    <p>A <em>Decodable</em> and <em>Encodable</em> bearer token representation with an attached type.</p>
+
+</dd>
+<dt class="structure">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestBearerType" title="structure - RestBearerType">
+        Rest​Bearer​Type
+    </a>
+</dt>
+<dd>
+    <p>A <em>Decodable</em> and <em>Encodable</em> bearer type representation.</p>
+
+</dd>
+<dt class="structure">
+    <a href="https://doc.restfulpropertykit.grevend.dev/Rest" title="structure - Rest">
+        Rest
+    </a>
+</dt>
+<dd>
+    <p>The <em>REST</em> property wrapper.</p>
+
+</dd>
+<dt class="structure">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestURLComponents" title="structure - RestURLComponents">
+        Rest​URLComponents
+    </a>
+</dt>
+<dd>
+    <p>This structure constructs URLs according to RFC 3986.</p>
+
+</dd>
+<dt class="structure">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestQueryMetadata" title="structure - RestQueryMetadata">
+        Rest​Query​Metadata
+    </a>
+</dt>
+<dd>
+    <p>A representation of the <em>RestQuery</em> metadata.</p>
+
+</dd>
+        </dl>
+    </section>
+    <section id="enumerations">
+        <h2>Enumerations</h2>
+        <dl>
+            <dt class="enumeration">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestQueryError" title="enumeration - RestQueryError">
+        Rest​Query​Error
+    </a>
+</dt>
+<dd>
+    <p>The <em>RestQuery</em> error type.</p>
+
+</dd>
+        </dl>
+    </section>
+    <section id="protocols">
+        <h2>Protocols</h2>
+        <dl>
+            <dt class="protocol">
+    <a href="https://doc.restfulpropertykit.grevend.dev/ParentCodable" title="protocol - ParentCodable">
+        Parent​Codable
+    </a>
+</dt>
+<dd>
+    <p>A type that can wrap a child <em>Codable</em> value into a representation of itself.</p>
+
+</dd>
+<dt class="protocol">
+    <a href="https://doc.restfulpropertykit.grevend.dev/ParentCodableDynamicDispatch" title="protocol - ParentCodableDynamicDispatch">
+        Parent​Codable​Dynamic​Dispatch
+    </a>
+</dt>
+<dd>
+    <p>ParentCodableDynamicDispatch is a weakly typed wrapper to dispatch wrap method
+calls to a <em>ParentCodable</em> object.</p>
+
+</dd>
+<dt class="protocol">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestQuery" title="protocol - RestQuery">
+        Rest​Query
+    </a>
+</dt>
+<dd>
+    <p>The protocol all rest query implementations should conform to.</p>
+
+</dd>
+        </dl>
+    </section>
+    <section id="operators">
         <h2>Operators</h2>
         <dl>
             <dt class="operator">
@@ -88,7 +228,7 @@
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-25T12:47:35+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-04-25T16:26:07+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>

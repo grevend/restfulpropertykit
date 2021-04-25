@@ -26,7 +26,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#implementations">Implementations</a><ul><li class="function"><a href="#++">Query ++ [ParamKey: ParamValue] where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable</a></li></ul></li></ol>
+            <ol/>
         </div>
     </nav>
 
@@ -50,76 +50,13 @@
 
 </aside>
 </div>
-    <section id="implementations">
-        <h2>Implementations</h2>
-        <div role="article" class="function" id="++">
-    <h3>
-      Query ++ [ParamKey: ParamValue]
-      <small>where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable</small>
-    </h3>
-    <div class="declaration">
-<pre class="highlight"><code><span class="keyword">func</span> ++ &lt;<span class="variable">Query</span>, <span class="variable">Parent</span>, <span class="variable">Value</span>, <span class="variable">ParamKey</span>, <span class="variable">ParamValue</span>&gt;(<span class="variable">lhs</span>: <span class="type">Query</span>, <span class="variable">rhs</span>: [<span class="type">ParamKey</span>: <span class="type">ParamValue</span>]) -&gt; <span class="type">Query</span> <span class="keyword">where</span> <span class="type">Query</span>: <span class="type">RestQuery</span>, <span class="type">Query</span>.<span class="type">QueryParent</span> == <span class="type">Parent</span>, <span class="type">Query</span>.<span class="type">QueryValue</span> == <span class="type">Value</span>, <span class="type">ParamKey</span>: <span class="type">CustomStringConvertible</span>, <span class="type">ParamKey</span>: <span class="type">Hashable</span>, <span class="type">ParamValue</span>: <span class="type">CustomStringConvertible</span>, <span class="type">ParamValue</span>: <span class="type">Hashable</span> </code></pre>
-</div>
-<div class="summary" role="doc-abstract">
-    <p>The query parameter concatenation operator.</p>
 
-</div>
-<div class="discussion">
-    <p>Creates a copy of the on the left hand side provided query with an additional set of query parameters.</p>
-
-<p>Usage:</p>
-
-<html><body><pre class="highlight"><code><span class="keyword">let</span> <span class="variable">newQuery</span> = <span class="variable">$someQuery</span> ++ [<span class="string literal">"</span><span class="string literal">someKey</span><span class="string literal">"</span>: <span class="type">someValue</span>]
-</code></pre></body></html>
-<aside class="Requires">
-    <p>The query type <code>Query</code> must conform to the <code>RestQuery</code> protocol. <code>Query.QueryParent</code> and <code>Query.QueryValue</code> should equal <code>Parent</code> and <code>Value</code>. <code>ParamKey</code> and <code>ParamValue</code> must conform to both <code>CustomStringConvertible</code> and <code>Hashable</code>.</p>
-
-</aside>
-<h3>Reference</h3>
-
-<p><a href="https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46">Custom Operators</a></p>
-
-<aside class="Since">
-    <p>Sprint 1</p>
-
-</aside>
-</div>
-<h4>Parameters</h4>
-
-<table class="parameters">
-  <thead hidden>
-  <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-  </tr>
-  </thead>
-  <tbody>
-    <tr>
-    <th>lhs</th>
-    <td><code class="type">Query</code></td>
-    <td><p>The query instance the new copy will be based on.</p>
-</td>
-</tr>
-<tr>
-    <th>rhs</th>
-    <td><code class="type">[Param​Key:​ Param​Value]</code></td>
-    <td><p>The additional set of query parameters.</p>
-</td>
-</tr>
-  </tbody>
-</table>
-  <h4>Returns</h4>
-  <p>The query copy with additional query parameters.</p>
-
-</div>
-    </section>
         </article>
     </main>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-25T12:47:35+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-04-25T16:26:07+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>
