@@ -1128,6 +1128,19 @@ public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
     })
 }
 
+/// Allows to configure the *REST API*.
+///
+/// Usage:
+/// ~~~
+/// RestConfiguration.host = "someHost"
+/// ~~~
+///
+/// - Since: Sprint 1
+public final class RestConfiguration {
+    /// The URL host component.
+    static var host: String = ""
+}
+
 /// This structure constructs URLs according to RFC 3986.
 ///
 /// ### Reference
@@ -1172,7 +1185,7 @@ public struct RestURLComponents {
     ///
     /// - Since: Sprint 1
     fileprivate init(path: String, params: [String: String] = [:]) {
-        self.init(scheme: "https", host: "roadwayapp.eu-gb.mybluemix.net", path: path, params: params)
+        self.init(scheme: "https", host: RestConfiguration.host, path: path, params: params)
     }
 
     /// Creates a copy of the provided current URL components with a different params component.
