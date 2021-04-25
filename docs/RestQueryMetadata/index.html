@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestfulPropertyKit - RestQueryMetadata</title>
+    <link rel="stylesheet" type="text/css" href="https://doc.restfulpropertykit.grevend.dev/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="https://doc.restfulpropertykit.grevend.dev/">
+            <strong>
+                RestfulPropertyKit
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol><li><a href="#properties">Properties</a><ul><li class="variable"><a href="#restquerymetadata.urlcomponents">url​Components</a></li><li class="variable"><a href="#restquerymetadata.bearer">bearer</a></li><li class="variable"><a href="#restquerymetadata.prop">prop</a></li><li class="variable"><a href="#restquerymetadata.token">token</a></li></ul></li></ol>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+    <small>Structure</small>
+    <code class="name">Rest​Query​Metadata</code>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">struct</span> <span class="type">RestQueryMetadata</span>&lt;<span class="variable">Parent</span>, <span class="variable">Value</span>&gt; </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>A representation of the <em>RestQuery</em> metadata.</p>
+
+</div>
+<div class="discussion">
+    <aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+
+    <section id="properties">
+        <h2>Properties</h2>
+
+        <div role="article" class="variable" id="restquerymetadata.urlcomponents">
+    <h3>
+        <code>url​Components</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">urlComponents</span>: <span class="type">RestURLComponents</span></code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The URL components of the requests.</p>
+
+</div>
+</div>
+<div role="article" class="variable" id="restquerymetadata.bearer">
+    <h3>
+        <code>bearer</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">bearer</span>: <span class="type">Bool</span></code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Should the bearer token be send as part of the requests.</p>
+
+</div>
+</div>
+<div role="article" class="variable" id="restquerymetadata.prop">
+    <h3>
+        <code>prop</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">let</span> <span class="variable">prop</span>: <span class="type">KeyPath</span>&lt;<span class="type">Parent</span>, <span class="type">Value</span>&gt;</code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The parent type keypath to extract the requested value.</p>
+
+</div>
+</div>
+<div role="article" class="variable" id="restquerymetadata.token">
+    <h3>
+        <code>token</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">var</span> <span class="variable">token</span>: <span class="type">RestBearerToken</span>? </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The bearer token used for authorization.</p>
+
+</div>
+</div>
+    </section>
+
+
+
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-04-25T16:26:06+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>

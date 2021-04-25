@@ -26,7 +26,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol/>
+            <ol><li><a href="#implementations">Implementations</a><ul><li class="function"><a href="#??">Binding&lt;Value?&gt; ?? Value</a></li></ul></li></ol>
         </div>
     </nav>
 
@@ -50,13 +50,70 @@
 
 </aside>
 </div>
+    <section id="implementations">
+        <h2>Implementations</h2>
+        <div role="article" class="function" id="??">
+    <h3>
+      Binding&lt;Value?&gt; ?? Value
+      
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">func</span> ?? &lt;<span class="variable">Value</span>&gt;(<span class="variable">lhs</span>: <span class="type">Binding</span>&lt;<span class="type">Value</span>?&gt;, <span class="variable">rhs</span>: <span class="type">Value</span>) -&gt; <span class="type">Binding</span>&lt;<span class="type">Value</span>&gt; </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The nested <code>nil</code> in <code>Binding</code> coalescing operator.</p>
 
+</div>
+<div class="discussion">
+    <p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">let</span> <span class="variable">someBindingWithDefault</span> = <span class="variable">someBindingWithOptional</span> ?? <span class="variable">someDefaultValue</span>
+</code></pre></body></html>
+<h3>Reference</h3>
+
+<p><a href="https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46">Custom Operators</a></p>
+
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>lhs</th>
+    <td><code class="type">Binding&lt;Value?&gt;</code></td>
+    <td><p>The binding containing an optional value.</p>
+</td>
+</tr>
+<tr>
+    <th>rhs</th>
+    <td><code class="type">Value</code></td>
+    <td><p>The default value if the nested optional is none.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>A binding wrapping the original instance providing fallback logic.</p>
+
+</div>
+    </section>
         </article>
     </main>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-25T12:47:35+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-04-25T16:26:06+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>
