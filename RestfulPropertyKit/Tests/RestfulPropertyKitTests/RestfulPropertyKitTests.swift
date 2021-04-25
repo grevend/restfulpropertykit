@@ -1,8 +1,8 @@
 //
-//  RestfulPropertyKit.h
+//  RestfulPropertyKitTests.swift
 //  RestfulPropertyKit
 //
-//  Created by David Greven on 24.04.21.
+//  Created by David Greven on 25.04.21.
 //  Copyright (c) 2021 David Greven. All rights reserved.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,14 +18,11 @@
 //  limitations under the License.
 //
 
-#import <Foundation/Foundation.h>
+import XCTest
+@testable import RestfulPropertyKit
 
-//! Project version number for RestfulPropertyKit.
-FOUNDATION_EXPORT double RestfulPropertyKitVersionNumber;
-
-//! Project version string for RestfulPropertyKit.
-FOUNDATION_EXPORT const unsigned char RestfulPropertyKitVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <RestfulPropertyKit/PublicHeader.h>
-
-
+final class RestfulPropertyKitTests: XCTestCase {
+    func testExample() {
+        XCTAssertEqual("Hello, World!", "Hello, World!")
+    }
+}

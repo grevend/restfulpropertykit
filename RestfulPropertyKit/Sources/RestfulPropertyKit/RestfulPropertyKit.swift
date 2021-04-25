@@ -1,5 +1,5 @@
 //
-//  Rest.swift
+//  RestfulPropertyKit.swift
 //  RestfulPropertyKit
 //
 //  Created by David Greven on 12.04.21.
@@ -34,7 +34,7 @@ import SwiftUI
 /// - Requires: The type `ChildCodable` must conform to protocol `Codable`.
 ///
 /// - Since: Sprint 1
-protocol ParentCodable: Codable, ParentCodableDynamicDispatch where ChildCodable: Codable {
+public protocol ParentCodable: Codable, ParentCodableDynamicDispatch where ChildCodable: Codable {
     /// The associated child type implementing the *Decodable* and *Encodable*
     /// protocols.
     associatedtype ChildCodable
@@ -84,7 +84,7 @@ protocol ParentCodable: Codable, ParentCodableDynamicDispatch where ChildCodable
 /// ~~~
 ///
 /// - Since: Sprint 1
-protocol ParentCodableDynamicDispatch {
+public protocol ParentCodableDynamicDispatch {
     /// Should delegate the call and child value to a strongly typed
     /// `ParentCodable.wrap(child: ChildCodable)` implementation.
     ///
@@ -108,7 +108,7 @@ protocol ParentCodableDynamicDispatch {
 /// ~~~
 ///
 /// - Since: Sprint 1
-extension ParentCodable {
+public extension ParentCodable {
     /// Default implementation for `ParentCodableDynamicDispatch.dynamicWrap(child: Any)`.
     ///
     /// - Parameter child: The value to be wrapped by a parent type implementing
@@ -122,7 +122,7 @@ extension ParentCodable {
     /// ~~~
     ///
     /// - Since: Sprint 1
-    static func dynamicWrap(child: Any) -> Any {
+    fileprivate static func dynamicWrap(child: Any) -> Any {
         // swiftlint:disable force_cast
         self.wrap(child: child as! ChildCodable)
         // swiftlint:enable force_cast
@@ -136,7 +136,7 @@ extension ParentCodable {
 /// property wrapper to internal logic, requiring a reference to the value even if it is a struct or enum.
 ///
 /// - Since: Sprint 1
-class RestValueReference<Value> {
+public class RestValueReference<Value> {
     /// The referenced value. Visibility is set to `fileprivate` to allow the implementation of
     /// `RestMutableValueReference<Value>` while restricting other subclasses from modifying
     /// the referenced value.
@@ -149,7 +149,7 @@ class RestValueReference<Value> {
     /// - Returns: The newly created instance referencing the given value.
     ///
     /// - Since: Sprint 1
-    init(value: Value) {
+    public init(value: Value) {
         self.value = value
     }
 }
@@ -169,7 +169,7 @@ class RestValueReference<Value> {
 /// ~~~
 ///
 /// - Since: Sprint 1
-final class RestMutableValueReference<Value>: RestValueReference<Value> {
+public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     /// Mutates or replaces the referenced value.
     ///
     /// Usage:
@@ -180,7 +180,7 @@ final class RestMutableValueReference<Value>: RestValueReference<Value> {
     /// - Parameter with: A new or mutated value of the same type.
     ///
     /// - Since: Sprint 1
-    func update(with value: Value) {
+    public func update(with value: Value) {
         self.value = value
     }
 }
@@ -354,11 +354,11 @@ fileprivate extension Publisher where Self.Failure == Never {
 /// ```
 ///
 /// - Since: Sprint 1
-struct RestBearerToken: Codable {
+public struct RestBearerToken: Codable {
     /// The token value.
-    let value: String
+    public let value: String
     /// The bearer type representation.
-    let type: RestBearerType
+    public let type: RestBearerType
 
     /// The decoding and encoding keys used for mapping the *RestBearerToken* properties.
     ///
@@ -387,9 +387,9 @@ struct RestBearerToken: Codable {
 /// ```
 ///
 /// - Since: Sprint 1
-struct RestBearerType: Codable {
+public struct RestBearerType: Codable {
     /// The type value.
-    let value: String
+    public let value: String
 
     /// The decoding and encoding keys used for mapping the *RestBearerType* properties.
     ///
@@ -612,7 +612,7 @@ struct RestBearerType: Codable {
 /// - Requires: The parent type `Parent` and the value type `Value` must conform to protocol `Codable`.
 ///
 /// - Since: Sprint 1
-@propertyWrapper struct Rest<Parent, Value> where Parent: Codable, Value: Codable {
+@propertyWrapper public struct Rest<Parent, Value> where Parent: Codable, Value: Codable {
     /// The mutable reference to the wrapped property value.
     private var _wrappedValue: RestMutableValueReference<Value>
     /// The query associated with this wrapped property.
@@ -665,7 +665,7 @@ struct RestBearerType: Codable {
     /// - Returns: A new *Rest* property wrapper instance.
     ///
     /// - Since: Sprint 1
-    init(wrappedValue: Value, path: String, bearer: Bool = true) where Parent == Value {
+    public init(wrappedValue: Value, path: String, bearer: Bool = true) where Parent == Value {
         self._wrappedValue = RestMutableValueReference(value: wrappedValue)
         self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self))
     }
@@ -686,7 +686,7 @@ struct RestBearerType: Codable {
     /// - Returns: A new *Rest* property wrapper instance.
     ///
     /// - Since: Sprint 1
-    init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true) where Parent == Value, ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible {
+    public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true) where Parent == Value, ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible {
         self._wrappedValue = RestMutableValueReference(value: wrappedValue)
         self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self))
     }
@@ -708,7 +708,7 @@ struct RestBearerType: Codable {
     /// - Returns: A new *Rest* property wrapper instance.
     ///
     /// - Since: Sprint 1
-    init(wrappedValue: Value, path: String, bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where Parent: ParentCodable, Parent.ChildCodable == Value {
+    public init(wrappedValue: Value, path: String, bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where Parent: ParentCodable, Parent.ChildCodable == Value {
         self._wrappedValue = RestMutableValueReference(value: wrappedValue)
         self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop))
     }
@@ -731,7 +731,7 @@ struct RestBearerType: Codable {
     /// - Returns: A new *Rest* property wrapper instance.
     ///
     /// - Since: Sprint 1
-    init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
+    public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
         self._wrappedValue = RestMutableValueReference(value: wrappedValue)
         self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
     }
@@ -762,7 +762,7 @@ struct RestBearerType: Codable {
     /// ~~~
     ///
     /// - Since: Sprint 1
-    fileprivate(set) var projectedValue: RestQueryImpl<Parent, Value> {
+    public var projectedValue: RestQueryImpl<Parent, Value> {
         get {
             query
         }
@@ -778,7 +778,7 @@ struct RestBearerType: Codable {
 ///  to protocol `Codable`.
 ///
 /// - Since: Sprint 1
-@dynamicMemberLookup protocol RestQuery: AnyObject where QueryParent: Codable, QueryValue: Codable {
+@dynamicMemberLookup public protocol RestQuery: AnyObject where QueryParent: Codable, QueryValue: Codable {
     /// The parent type.
     associatedtype QueryParent
     /// The value type.
@@ -825,7 +825,7 @@ struct RestBearerType: Codable {
 /// map the type properties to bindings.
 ///
 /// - Since: Sprint 1
-extension RestQuery {
+public extension RestQuery {
     /// Lazily creates and stores bindings for the properties of the request return type as part of the query metadata.
     ///
     /// - Parameter dynamicMember: The read-only property key path.
@@ -872,7 +872,7 @@ extension RestQuery {
 /// The *RestQuery* error type.
 ///
 /// - Since: Sprint 1
-enum RestQueryError: Error {
+public enum RestQueryError: Error {
     /// The query is missing an operation implementation.
     case missingImplementation
     /// The dynamic dispatch failed to invoke the typesafe wrap method successfully.
@@ -922,7 +922,7 @@ infix operator ++: AssignmentPrecedence
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-func ++ <Query, Parent, Value, ParamKey, ParamValue>(lhs: Query, rhs: [ParamKey: ParamValue]) -> Query where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable {
+public func ++ <Query, Parent, Value, ParamKey, ParamValue>(lhs: Query, rhs: [ParamKey: ParamValue]) -> Query where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable {
     // swiftlint:disable colon
     rhs.isEmpty ? lhs : Query(current: lhs, params: lhs.metadata.urlComponents.params.merging(Dictionary(uniqueKeysWithValues: rhs.map { (key: $0.key.description, value: $0.value.description) })) { (_, new) in new })
     // swiftlint:enable colon
@@ -953,7 +953,7 @@ postfix operator >?
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+public postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
     query.get(prop: false)
 }
 
@@ -980,7 +980,7 @@ postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> wh
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+public postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
     query.get(prop: true)
 }
 
@@ -1009,7 +1009,7 @@ postfix operator <!
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
     query.post(prop: false, newValue: query.wrappedValue)
 }
 
@@ -1035,7 +1035,7 @@ postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> wh
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
     query.post(prop: true, newValue: query.wrappedValue)
 }
 
@@ -1066,7 +1066,7 @@ infix operator <-: AssignmentPrecedence
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
     lhs.post(prop: false, newValue: rhs)
 }
 
@@ -1094,7 +1094,7 @@ func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> 
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
     lhs.post(prop: true, newValue: rhs)
 }
 
@@ -1120,7 +1120,7 @@ infix operator ??
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
+public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
     return Binding(get: {
         lhs.wrappedValue ?? rhs
     }, set: { value in
@@ -1134,15 +1134,15 @@ func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 /// [RFC 3986](https://tools.ietf.org/html/rfc3986)
 ///
 /// - Since: Sprint 1
-struct RestURLComponents {
+public struct RestURLComponents {
     /// The URL scheme component.
-    let scheme: String
+    public let scheme: String
     /// The URL host component.
-    let host: String
+    public let host: String
     /// The URL path component.
-    let path: String
+    public let path: String
     /// The URL params component.
-    let params: [String: String]
+    public let params: [String: String]
 
     /// Creates a *RestURLComponents* instance.
     ///
@@ -1155,7 +1155,7 @@ struct RestURLComponents {
     /// - Returns: The created *RestURLComponents* instance.
     ///
     /// - Since: Sprint 1
-    init(scheme: String, host: String, path: String, params: [String: String]) {
+    fileprivate init(scheme: String, host: String, path: String, params: [String: String]) {
         self.scheme = scheme
         self.host = host
         self.path = path
@@ -1171,7 +1171,7 @@ struct RestURLComponents {
     /// - Returns: The created *RestURLComponents* instance.
     ///
     /// - Since: Sprint 1
-    init(path: String, params: [String: String] = [:]) {
+    fileprivate init(path: String, params: [String: String] = [:]) {
         self.init(scheme: "https", host: "roadwayapp.eu-gb.mybluemix.net", path: path, params: params)
     }
 
@@ -1184,7 +1184,7 @@ struct RestURLComponents {
     /// - Returns: The copy with a different params component.
     ///
     /// - Since: Sprint 1
-    init(current: RestURLComponents, params: [String: String]) {
+    fileprivate init(current: RestURLComponents, params: [String: String]) {
         self.init(scheme: current.scheme, host: current.host, path: current.path, params: params)
     }
 
@@ -1195,7 +1195,7 @@ struct RestURLComponents {
     /// - Returns: The constructed URL.
     ///
     /// - Since: Sprint 1
-    func url(params: Bool = true) -> URL {
+    public func url(params: Bool = true) -> URL {
         var components = URLComponents()
 
         components.scheme = self.scheme
@@ -1212,19 +1212,19 @@ struct RestURLComponents {
 /// A representation of the *RestQuery* metadata.
 ///
 /// - Since: Sprint 1
-struct RestQueryMetadata<Parent, Value> {
+public struct RestQueryMetadata<Parent, Value> {
     /// The URL components of the requests.
-    let urlComponents: RestURLComponents
+    public let urlComponents: RestURLComponents
     /// Should the bearer token be send as part of the requests.
-    let bearer: Bool
+    public let bearer: Bool
     /// The parent type.
-    let parent: Parent.Type
+    fileprivate let parent: Parent.Type
     /// The parent type keypath to extract the requested value.
-    let prop: KeyPath<Parent, Value>
+    public let prop: KeyPath<Parent, Value>
     /// The bindings to the parent type properties.
-    var bindings: [PartialKeyPath<Value>: Any]
+    fileprivate var bindings: [PartialKeyPath<Value>: Any]
     /// The bearer token used for authorization.
-    var token: RestBearerToken? {
+    public var token: RestBearerToken? {
         if let token = UserDefaults.standard.string(forKey: "bearerToken"), let type = UserDefaults.standard.string(forKey: "bearerType") {
             return RestBearerToken(value: token, type: RestBearerType(value: type))
         }
@@ -1243,7 +1243,7 @@ struct RestQueryMetadata<Parent, Value> {
     /// - Returns: The created *RestQueryMetadata* instance.
     ///
     /// - Since: Sprint 1
-    init(urlComponents: RestURLComponents, bearer: Bool, parent: Parent.Type, prop: KeyPath<Parent, Value>, bindings: [PartialKeyPath<Value>: Any] = [:]) {
+    fileprivate init(urlComponents: RestURLComponents, bearer: Bool, parent: Parent.Type, prop: KeyPath<Parent, Value>, bindings: [PartialKeyPath<Value>: Any] = [:]) {
         self.urlComponents = urlComponents
         self.bearer = bearer
         self.parent = parent
@@ -1260,7 +1260,7 @@ struct RestQueryMetadata<Parent, Value> {
     /// - Returns: The copy with a different params component.
     ///
     /// - Since: Sprint 1
-    init(current: RestQueryMetadata, params: [String: String]) {
+    fileprivate init(current: RestQueryMetadata, params: [String: String]) {
         self.init(urlComponents: RestURLComponents(current: current.urlComponents, params: params), bearer: current.bearer, parent: current.parent, prop: current.prop, bindings: current.bindings)
     }
 }
@@ -1271,20 +1271,20 @@ struct RestQueryMetadata<Parent, Value> {
 ///  to protocol `Codable`.
 ///
 /// - Since: Sprint 1
-class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable, Value: Codable {
+public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable, Value: Codable {
     /// The internal mutable wrapped value reference.
     private var _wrappedValue: RestMutableValueReference<Value>
     /// A binding for the wrapped value.
-    var projectedValue: Binding<Value>
+    public var projectedValue: Binding<Value>
     /// The metadata associated with this query.
-    var metadata: RestQueryMetadata<Parent, Value>
+    public var metadata: RestQueryMetadata<Parent, Value>
     /// The `Set` of cancellable query requests.
     fileprivate var cancellable: Set<AnyCancellable> = Set(minimumCapacity: 1)
 
     /// The value wrapped by the property attached to this query.
     ///
     /// - Since: Sprint 1
-    var wrappedValue: Value {
+    public var wrappedValue: Value {
         get {
             _wrappedValue.value
         }
@@ -1321,7 +1321,7 @@ class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable, Value: Coda
     /// - Returns: The created copy *RestQueryImpl* instance.
     ///
     /// - Since: Sprint 1
-    required convenience init(current: RestQueryImpl<Parent, Value>, params: [String: String]) {
+    required convenience public init(current: RestQueryImpl<Parent, Value>, params: [String: String]) {
         self.init(current._wrappedValue, RestQueryMetadata(current: current.metadata, params: params))
     }
 
@@ -1332,7 +1332,7 @@ class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable, Value: Coda
     /// - Returns: A future that will resolve to the request result or an error.
     ///
     /// - Since: Sprint 1
-    func get(prop: Bool) -> Future<Value, RestQueryError> {
+    public func get(prop: Bool) -> Future<Value, RestQueryError> {
         prop ? getValueWithPath() : getValue()
     }
 
@@ -1489,7 +1489,7 @@ class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable, Value: Coda
     /// - Returns: A future that will resolve to the new value or an error.
     ///
     /// - Since: Sprint 1
-    func post(prop: Bool, newValue: Value) -> Future<Value, RestQueryError> {
+    public func post(prop: Bool, newValue: Value) -> Future<Value, RestQueryError> {
         prop ? postValueWithPath(newValue: newValue) : postValue(newValue: newValue)
     }
 
