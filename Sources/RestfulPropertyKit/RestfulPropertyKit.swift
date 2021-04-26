@@ -1046,8 +1046,8 @@ postfix operator <!
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    query.post(prop: false, newValue: query.wrappedValue)
+public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+    RestQueryResult(query: query, result: query.post(prop: false, newValue: query.wrappedValue))
 }
 
 /// The query post currently wrapped value operator.
@@ -1072,8 +1072,8 @@ public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryEr
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    query.post(prop: true, newValue: query.wrappedValue)
+public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+    RestQueryResult(query: query, result: query.post(prop: true, newValue: query.wrappedValue))
 }
 
 /// The query post new value operator.
