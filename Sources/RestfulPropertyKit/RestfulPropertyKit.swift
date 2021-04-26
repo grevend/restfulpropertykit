@@ -1057,7 +1057,7 @@ infix operator <-: AssignmentPrecedence
 ///   - lhs: The query instance used to make the post request.
 ///   - rhs: The value that should be sent as the body part of the `HTTPS` request.
 ///
-/// - Returns: future that will resolve to the new value or an error.
+/// - Returns: A future that will resolve to the new value or an error.
 ///
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` and `Query.QueryValue` should equal `Parent` and `Value`.
@@ -1083,7 +1083,7 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQuery
 ///   - lhs: The query instance used to make the post request.
 ///   - rhs: The value that should be send as the body part of the `HTTPS` request.
 ///
-/// - Returns: future that will resolve to the new value or an error.
+/// - Returns: A future that will resolve to the new value or an error.
 ///
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` must conform to the `ParentCodable` protocol.
