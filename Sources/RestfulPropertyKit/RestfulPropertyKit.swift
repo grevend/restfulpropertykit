@@ -933,7 +933,7 @@ public enum RestQueryError: Error {
 /// The query parameter concatenation operator.
 ///
 /// - Since: Sprint 1
-infix operator ++: AssignmentPrecedence
+infix operator ++: MultiplicationPrecedence
 
 /// The query parameter concatenation operator.
 ///
@@ -1079,7 +1079,7 @@ public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryEr
 /// The query post new value operator.
 ///
 /// - Since: Sprint 1
-infix operator <-: AssignmentPrecedence
+infix operator <-: MultiplicationPrecedence
 
 /// The query post new value operator.
 ///
