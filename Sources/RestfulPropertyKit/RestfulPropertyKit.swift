@@ -1103,8 +1103,8 @@ infix operator <-: MultiplicationPrecedence
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    lhs.post(prop: false, newValue: rhs)
+public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+    RestQueryResult(query: lhs, result: lhs.post(prop: false, newValue: rhs))
 }
 
 /// The query post new value operator.
@@ -1131,8 +1131,8 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQuery
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    lhs.post(prop: true, newValue: rhs)
+public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+    RestQueryResult(query: lhs, result: lhs.post(prop: true, newValue: rhs))
 }
 
 /// The query results depdents on operator.
