@@ -1103,6 +1103,43 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQuery
 /// - Since: Sprint 1
 infix operator ->>: AdditionPrecedence
 
+/// The query results depdents on operator.
+///
+/// Joins two queries on the success of the left-hand side. If the operation succeeds, the right-hand side is triggered.
+///
+/// Usage:
+/// ~~~
+/// ($someQuery <- someValue ->> $someDependentQuery<!).success {
+///     ...
+/// }
+/// ~~~
+///
+/// - Parameters:
+///   - lhs: The query instance used to make the dependable request.
+///   - rhs: The dependent query that's triggered on the success of the left-hand side.
+///
+/// - Returns: A future that will resolve to the new value or an error.
+///
+/// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
+///
+/// # Reference
+/// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
+///
+/// - Since: Sprint 1
+func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>) -> RestQueryResult<Query> where Query: RestQuery {
+    RestQueryResult(query: rhs.query, result: Future { promise in
+        lhs.success {
+            rhs.query.cancellable.insert(rhs.result.sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    promise(.failure(error))
+                }
+            }, receiveValue: { value in
+                promise(.success(value))
+            }))
+        }
+    })
+}
+
 /// The nested `nil` in `Binding` coalescing operator.
 ///
 /// - Since: Sprint 1
