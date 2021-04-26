@@ -1098,6 +1098,11 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQuery
     lhs.post(prop: true, newValue: rhs)
 }
 
+/// The query results depdents on operator.
+///
+/// - Since: Sprint 1
+infix operator ->>: AdditionPrecedence
+
 /// The nested `nil` in `Binding` coalescing operator.
 ///
 /// - Since: Sprint 1
