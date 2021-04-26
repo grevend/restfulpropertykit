@@ -1371,7 +1371,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
     /// The metadata associated with this query.
     public var metadata: RestQueryMetadata<Parent, Value>
     /// The `Set` of cancellable query requests.
-    fileprivate var cancellable: Set<AnyCancellable> = Set(minimumCapacity: 1)
+    public var cancellable: Set<AnyCancellable> = Set(minimumCapacity: 1)
 
     /// The value wrapped by the property attached to this query.
     ///
