@@ -772,6 +772,41 @@ public struct RestBearerType: Codable {
     }
 }
 
+public final class RestQueryResult<QueryType> where QueryType: RestQuery {
+    public let query: QueryType
+    public let result: Future<QueryType.QueryValue, RestQueryError>
+
+    fileprivate init(query: QueryType, result: Future<QueryType.QueryValue, RestQueryError>) {
+        self.query = query
+        self.result = result
+    }
+
+    public func success(received: @escaping (() -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            guard case .failure = completion else {
+                received()
+                return
+            }
+        }, receiveValue: { _ in }))
+    }
+
+    public func failure(received: @escaping (() -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            if case .failure = completion {
+                received()
+            }
+        }, receiveValue: { _ in }))
+    }
+
+    public func sink(receiveCompletion: @escaping ((Subscribers.Completion<RestQueryError>) -> Void), receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue))
+    }
+
+    public func sink(receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: { _ in }, receiveValue: receiveValue))
+    }
+}
+
 /// The protocol all rest query implementations should conform to.
 ///
 /// - Requires: The parent type `QueryParent` and the value type `QueryValue` must conform
@@ -790,6 +825,8 @@ public struct RestBearerType: Codable {
     var wrappedValue: QueryValue { get set }
     /// A binding for the wrapped value.
     var projectedValue: Binding<QueryValue> { get }
+
+    var cancellable: Set<AnyCancellable> { get set }
 
     /// Creates a copy of the provided current query with a different params component.
     ///
