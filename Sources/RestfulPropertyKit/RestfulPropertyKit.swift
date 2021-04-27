@@ -1154,7 +1154,7 @@ infix operator <-: MultiplicationPrecedence
 ///
 /// Usage:
 /// ~~~
-/// let cancel = ($someQuery <- someNewValue).sink(...)
+/// ($someQuery <- someNewValue).sink { ... }
 /// ~~~
 ///
 /// - Parameters:
