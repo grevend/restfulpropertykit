@@ -53,6 +53,14 @@ The metadata associated with this query.
 public var metadata: RestQueryMetadata<Parent, Value>
 ```
 
+### `cancellable`
+
+The `Set` of cancellable query requests.
+
+``` swift
+public var cancellable: Set<AnyCancellable> 
+```
+
 ### `wrappedValue`
 
 The value wrapped by the property attached to this query.

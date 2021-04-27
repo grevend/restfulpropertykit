@@ -5,7 +5,9 @@
     contexts.
   - [RestMutableValueReference](https://github.com/grevend/restfulpropertykit/wiki/RestMutableValueReference):
     The mutable counterpart of *RestValueReference\<Value\>*. Subclassing is not possible since it is
-    final and the value setter in *RestValueReference* is `fileprivate`.
+    final and the value setter in *RestValueReference* is *fileprivate*.
+  - [RestQueryResult](https://github.com/grevend/restfulpropertykit/wiki/RestQueryResult):
+    The result type of a *REST* query.
   - [RestConfiguration](https://github.com/grevend/restfulpropertykit/wiki/RestConfiguration):
     Allows to configure the *REST API*.
   - [RestQueryImpl](https://github.com/grevend/restfulpropertykit/wiki/RestQueryImpl):
@@ -39,6 +41,8 @@
     The nested `nil` in `Binding` coalescing operator.
   - [\<-](https://github.com/grevend/restfulpropertykit/wiki/%3C-):
     The query post new value operator.
+  - [-\>\>](https://github.com/grevend/restfulpropertykit/wiki/-%3E%3E):
+    The query results depdents on operator.
   - [++](https://github.com/grevend/restfulpropertykit/wiki/++):
     The query parameter concatenation operator.
   - [\>?](https://github.com/grevend/restfulpropertykit/wiki/%3E%3F):

@@ -44,13 +44,11 @@ struct Account: Codable {
 struct SomeView: View {
     @Rest(path: "signin", bearer: false) var account: Account = Account(email: "", password: "")
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         TextField("Email placeholder", text: self.$account.email)
         TextField("Password placeholder", text: self.$account.password)
         Button("Sign In") {
-            cancelable.update(with: self.$account>?.sink(receiveCompletion: { _ in }, receiveValue: { _ in}))
+            self.$account>?.success { ... }
         }
     }
 }
@@ -68,12 +66,9 @@ struct Fruit: Codable {
 struct SomeView: View {
     @Rest(path: "fruitoftheday") var fruit: Fruit = Fruit(name: "strawberry", size: 3, color: "red")
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         Text(fruit.name)
-            .onAppear { cancelable.update(with: self.$fruit>?
-                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+            .onAppear { self.$fruit>?.sink { _ in } }
     }
 }
 ```
@@ -93,12 +88,9 @@ struct Fruits: Codable {
 struct SomeView: View {
     @Rest(path: "fruits", params: ["limit": 10]) var fruits: Fruits = Fruits()
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         Text(fruits.values[0].name)
-            .onAppear { cancelable.update(with: self.$fruits>?
-               .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+            .onAppear { self.$fruits>?.sink { _ in } }
    }
 }
 ```
@@ -122,12 +114,9 @@ struct Fruits: ParentCodable {
 struct SomeView: View {
     @Rest(path: "fruits", parent: Fruits.self, prop: \.values) var fruits: [Fruit] = []
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         Text(fruits[0].name)
-            .onAppear { cancelable.update(with: self.$fruits>?
-               .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+            .onAppear { self.$fruits>?.sink { _ in } }
     }
 }
 ```
@@ -151,12 +140,9 @@ struct Fruits: ParentCodable {
 struct SomeView: View {
     @Rest(path: "fruits", params: ["limit": 10], parent: Fruits.self, prop: \.values) var fruits: [Fruit] = []
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         Text(fruits[0].name)
-            .onAppear { cancelable.update(with: self.$fruits>?
-               .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+            .onAppear { self.$fruits>?.sink { _ in } }
     }
 }
 ```
@@ -172,14 +158,11 @@ struct Account: Codable {
 struct SomeView: View {
     @Rest(path: "signup") var account: Account = Account(email: "", password: "")
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         TextField("Email placeholder", text: self.$account.email)
         TextField("Password placeholder", text: self.$account.password)
         Button("Sign Up") {
-            cancelable.update(with: self.$account<!
-                .sink(receiveCompletion: { _ in }, receiveValue: { _ in}))
+            self.$account<!.success { ... }
         }
     }
 }
@@ -196,20 +179,17 @@ struct Account: Codable {
 struct SomeView: View {
     @Rest(path: "signup") var account: Account = Account(email: "", password: "")
 
-    private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-
     var body: some View {
         TextField("Email placeholder", text: self.$account.email)
         TextField("Password placeholder", text: self.$account.password)
         Button("Sign Up") {
-            cancelable.update(with: (self.$account <- someNewAccount)
-                .sink(receiveCompletion: { _ in }, receiveValue: { _ in}))
+            (self.$account <- someNewAccount).success { ... }
         }
     }
 }
 ```
 
-### References
+# References
 
 [Property Wrapper](https://docs.swift.org/swift-book/LanguageGuide/Properties.html#ID617)
 
