@@ -824,6 +824,22 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
         }, receiveValue: { _ in }))
     }
 
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// Upon completion the `failure(received:)` operator’s received closure indicates the failure of the query.
+    ///
+    /// Usage:
+    /// ~~~
+    /// someQueryResult.failure {
+    ///     ...
+    /// }
+    /// ~~~
+    ///
+    /// This method creates and returns a subscriber.
+    ///
+    /// - Parameter received: The closure to execute on failed completion.
+    ///
+    /// - Since: Sprint 1
     public func failure(received: @escaping (() -> Void)) {
         self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
             if case .failure = completion {
