@@ -9,6 +9,7 @@
   - [RestQueryError](https://github.com/grevend/restfulpropertykit/wiki/RestQueryError)
   - [RestQueryImpl](https://github.com/grevend/restfulpropertykit/wiki/RestQueryImpl)
   - [RestQueryMetadata](https://github.com/grevend/restfulpropertykit/wiki/RestQueryMetadata)
+  - [RestQueryResult](https://github.com/grevend/restfulpropertykit/wiki/RestQueryResult)
   - [RestURLComponents](https://github.com/grevend/restfulpropertykit/wiki/RestURLComponents)
   - [RestValueReference](https://github.com/grevend/restfulpropertykit/wiki/RestValueReference)
 
@@ -27,6 +28,7 @@
 <summary>Operators</summary>
 
   - [++](https://github.com/grevend/restfulpropertykit/wiki/++)
+  - [-\>\>](https://github.com/grevend/restfulpropertykit/wiki/-%3E%3E)
   - [\<\!](https://github.com/grevend/restfulpropertykit/wiki/%3C!)
   - [\<-](https://github.com/grevend/restfulpropertykit/wiki/%3C-)
   - [\>?](https://github.com/grevend/restfulpropertykit/wiki/%3E%3F)

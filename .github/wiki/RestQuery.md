@@ -86,6 +86,12 @@ A binding for the wrapped value.
 var projectedValue: Binding<QueryValue> 
 ```
 
+### cancellable
+
+``` swift
+var cancellable: Set<AnyCancellable> 
+```
+
 ### init(current:​params:​)
 
 Creates a copy of the provided current query with a different params component.
