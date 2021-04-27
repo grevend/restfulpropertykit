@@ -1331,6 +1331,8 @@ public final class RestConfiguration {
     fileprivate static var mockRequestProvider: RestRequestProvider = URLSession.shared
 }
 
+// swiftlint:disable identifier_name
+
 /// [EXPERIMENTAL] Mocks all requests made in the block closure using the given *RestRequestProvider*.
 ///
 /// Usage:
@@ -1354,6 +1356,7 @@ public func _restMock<Result>(with provider: RestRequestProvider, block: (() -> 
     RestConfiguration.mock = false
     return result
 }
+// swiftlint:enable identifier_name
 
 /// This structure constructs URLs according to RFC 3986.
 ///
