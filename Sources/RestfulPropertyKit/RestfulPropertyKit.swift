@@ -1226,7 +1226,7 @@ infix operator ->>: AdditionPrecedence
 ///
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 ///
-/// # Reference
+/// ### Reference
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
