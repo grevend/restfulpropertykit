@@ -1230,7 +1230,7 @@ infix operator ->>: AdditionPrecedence
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>) -> RestQueryResult<Query> where Query: RestQuery {
+public func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>) -> RestQueryResult<Query> where Query: RestQuery {
     RestQueryResult(query: rhs.query, result: Future { promise in
         lhs.success {
             rhs.query.cancellable.insert(rhs.result.sink(receiveCompletion: { completion in
