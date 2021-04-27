@@ -1068,7 +1068,7 @@ public postfix func >? <Query, Value>(query: Query) -> RestQueryResult<Query> wh
 ///
 /// Usage:
 /// ~~~
-/// let cancel = $someQuery>?.sink(...)
+/// $someQuery>?.sink { ... }
 /// ~~~
 ///
 /// - Parameter query: The query instance used to make the get request.
