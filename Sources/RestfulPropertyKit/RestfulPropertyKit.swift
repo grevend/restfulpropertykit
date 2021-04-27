@@ -772,6 +772,13 @@ public struct RestBearerType: Codable {
     }
 }
 
+/// The result type of a *REST* query.
+///
+/// This result type contains a reference to the query as well as a future that will resolve to the new value or an error.
+///
+/// - Requires: `QueryType` must conform to protocol `RestQuery`.
+///
+/// - Since: Sprint 1
 public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     public let query: QueryType
     public let result: Future<QueryType.QueryValue, RestQueryError>
