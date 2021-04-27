@@ -155,7 +155,7 @@ public class RestValueReference<Value> {
 }
 
 /// The mutable counterpart of *RestValueReference\<Value\>*. Subclassing is not possible since it is
-/// final and the value setter in *RestValueReference* is `fileprivate`.
+/// final and the value setter in *RestValueReference* is *fileprivate*.
 ///
 /// Class-based value wrapper to easily reference and mutate the value while avoiding copying the data
 /// in certain contexts.
@@ -445,13 +445,11 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "signin", bearer: false) var account: Account = Account(email: "", password: "")
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         TextField("Email placeholder", text: self.$account.email)
 ///         TextField("Password placeholder", text: self.$account.password)
 ///         Button("Sign In") {
-///             cancelable.update(with: self.$account>?.sink(receiveCompletion: { _ in }, receiveValue: { _ in}))
+///             self.$account>?.success { ... }
 ///         }
 ///     }
 /// }
@@ -468,12 +466,9 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "fruitoftheday") var fruit: Fruit = Fruit(name: "strawberry", size: 3, color: "red")
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         Text(fruit.name)
-///             .onAppear { cancelable.update(with: self.$fruit>?
-///                 .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+///             .onAppear { self.$fruit>?.sink { _ in } }
 ///     }
 /// }
 /// ~~~
@@ -492,12 +487,9 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "fruits", params: ["limit": 10]) var fruits: Fruits = Fruits()
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         Text(fruits.values[0].name)
-///             .onAppear { cancelable.update(with: self.$fruits>?
-///                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+///             .onAppear { self.$fruits>?.sink { _ in } }
 ///    }
 /// }
 /// ~~~
@@ -520,12 +512,9 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "fruits", parent: Fruits.self, prop: \.values) var fruits: [Fruit] = []
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         Text(fruits[0].name)
-///             .onAppear { cancelable.update(with: self.$fruits>?
-///                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+///             .onAppear { self.$fruits>?.sink { _ in } }
 ///     }
 /// }
 /// ~~~
@@ -548,12 +537,9 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "fruits", params: ["limit": 10], parent: Fruits.self, prop: \.values) var fruits: [Fruit] = []
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         Text(fruits[0].name)
-///             .onAppear { cancelable.update(with: self.$fruits>?
-///                .sink(receiveCompletion: { _ in }, receiveValue: { _ in })) }
+///             .onAppear { self.$fruits>?.sink { _ in } }
 ///     }
 /// }
 /// ~~~
@@ -568,14 +554,11 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "signup") var account: Account = Account(email: "", password: "")
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         TextField("Email placeholder", text: self.$account.email)
 ///         TextField("Password placeholder", text: self.$account.password)
 ///         Button("Sign Up") {
-///             cancelable.update(with: self.$account<!
-///                 .sink(receiveCompletion: { _ in }, receiveValue: { _ in}))
+///             self.$account<!.success { ... }
 ///         }
 ///     }
 /// }
@@ -591,20 +574,17 @@ public struct RestBearerType: Codable {
 /// struct SomeView: View {
 ///     @Rest(path: "signup") var account: Account = Account(email: "", password: "")
 ///
-///     private var cancelable: RestMutableValueReference<AnyCancellable?> = RestMutableValueReference(value: nil)
-///
 ///     var body: some View {
 ///         TextField("Email placeholder", text: self.$account.email)
 ///         TextField("Password placeholder", text: self.$account.password)
 ///         Button("Sign Up") {
-///             cancelable.update(with: (self.$account <- someNewAccount)
-///                 .sink(receiveCompletion: { _ in }, receiveValue: { _ in}))
+///             (self.$account <- someNewAccount).success { ... }
 ///         }
 ///     }
 /// }
 /// ~~~
 ///
-/// ### References
+/// # References
 /// [Property Wrapper](https://docs.swift.org/swift-book/LanguageGuide/Properties.html#ID617)
 ///
 /// [Key Paths](https://github.com/apple/swift-evolution/blob/master/proposals/0161-key-paths.md)
@@ -772,6 +752,128 @@ public struct RestBearerType: Codable {
     }
 }
 
+/// The result type of a *REST* query.
+///
+/// This result type contains a reference to the query as well as a future that will resolve to the new value or an error.
+///
+/// - Requires: `QueryType` must conform to protocol `RestQuery`.
+///
+/// - Since: Sprint 1
+public final class RestQueryResult<QueryType> where QueryType: RestQuery {
+    /// The query associated with this result.
+    public let query: QueryType
+    /// The query result as a future that will resolve to the new value or an error.
+    public let result: Future<QueryType.QueryValue, RestQueryError>
+
+    /// Creates a *RestQueryResult* instance.
+    ///
+    /// - Parameters:
+    ///   - query: The associated query.
+    ///   - result: A future that will resolve to the new value or an error.
+    ///
+    /// - Returns: A new *RestQueryType* instance.
+    ///
+    /// - Since: Sprint 1
+    fileprivate init(query: QueryType, result: Future<QueryType.QueryValue, RestQueryError>) {
+        self.query = query
+        self.result = result
+    }
+
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// Upon completion the `success(received:)` operator’s received closure indicates the successful termination of the query result.
+    ///
+    /// Usage:
+    /// ~~~
+    /// someQueryResult.success {
+    ///     ...
+    /// }
+    /// ~~~
+    ///
+    /// This method creates and returns a subscriber.
+    ///
+    /// - Parameter received: The closure to execute on successful completion.
+    ///
+    /// - Since: Sprint 1
+    public func success(received: @escaping (() -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            guard case .failure = completion else {
+                received()
+                return
+            }
+        }, receiveValue: { _ in }))
+    }
+
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// Upon completion the `failure(received:)` operator’s received closure indicates the failure of the query.
+    ///
+    /// Usage:
+    /// ~~~
+    /// someQueryResult.failure {
+    ///     ...
+    /// }
+    /// ~~~
+    ///
+    /// This method creates and returns a subscriber.
+    ///
+    /// - Parameter received: The closure to execute on failed completion.
+    ///
+    /// - Since: Sprint 1
+    public func failure(received: @escaping (() -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            if case .failure = completion {
+                received()
+            }
+        }, receiveValue: { _ in }))
+    }
+
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// Use `sink(receiveCompletion:receiveValue:)` to observe values received by the future publisher and process them using a closure you specify.
+    /// Upon completion the `sink(receiveCompletion:receiveValue:)` operator’s receiveCompletion closure indicates the successful termination of the stream.
+    ///
+    /// Usage:
+    /// ~~~
+    /// someQueryResult.sink(receiveCompletion: { completion in
+    ///     ...
+    /// }, receiveValue: { value in
+    ///     ...
+    /// })
+    /// ~~~
+    ///
+    /// This method creates the subscriber and immediately requests an unlimited number of values, prior to returning the subscriber.
+    ///
+    /// - Parameters:
+    ///   - receiveCompletion: The closure to execute on completion.
+    ///   - receiveValue: The closure to execute on receipt of a value.
+    ///
+    /// - Since: Sprint 1
+    public func sink(receiveCompletion: @escaping ((Subscribers.Completion<RestQueryError>) -> Void), receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue))
+    }
+
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// Use `sink(receiveValue:)` to observe values received by the future publisher and process them using a closure you specify.
+    ///
+    /// Usage:
+    /// ~~~
+    /// someQueryResult.sink { value in
+    ///     ...
+    /// }
+    /// ~~~
+    ///
+    /// This method creates the subscriber and immediately requests an unlimited number of values, prior to returning the subscriber.
+    ///
+    /// - Parameter receiveValue: The closure to execute on receipt of a value.
+    ///
+    /// - Since: Sprint 1
+    public func sink(receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
+        self.query.cancellable.insert(result.sink(receiveCompletion: { _ in }, receiveValue: receiveValue))
+    }
+}
+
 /// The protocol all rest query implementations should conform to.
 ///
 /// - Requires: The parent type `QueryParent` and the value type `QueryValue` must conform
@@ -790,6 +892,8 @@ public struct RestBearerType: Codable {
     var wrappedValue: QueryValue { get set }
     /// A binding for the wrapped value.
     var projectedValue: Binding<QueryValue> { get }
+
+    var cancellable: Set<AnyCancellable> { get set }
 
     /// Creates a copy of the provided current query with a different params component.
     ///
@@ -896,7 +1000,7 @@ public enum RestQueryError: Error {
 /// The query parameter concatenation operator.
 ///
 /// - Since: Sprint 1
-infix operator ++: AssignmentPrecedence
+infix operator ++: MultiplicationPrecedence
 
 /// The query parameter concatenation operator.
 ///
@@ -939,7 +1043,7 @@ postfix operator >?
 ///
 /// Usage:
 /// ~~~
-/// let cancel = $someQuery>?.sink(...)
+/// $someQuery>?.sink { ... }
 /// ~~~
 ///
 /// - Parameter query: The query instance used to make the get request.
@@ -953,8 +1057,8 @@ postfix operator >?
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    query.get(prop: false)
+public postfix func >? <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+    RestQueryResult(query: query, result: query.get(prop: false))
 }
 
 /// The query get request operator.
@@ -964,7 +1068,7 @@ public postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryEr
 ///
 /// Usage:
 /// ~~~
-/// let cancel = $someQuery>?.sink(...)
+/// $someQuery>?.sink { ... }
 /// ~~~
 ///
 /// - Parameter query: The query instance used to make the get request.
@@ -980,8 +1084,8 @@ public postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryEr
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public postfix func >? <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    query.get(prop: true)
+public postfix func >? <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+    RestQueryResult(query: query, result: query.get(prop: true))
 }
 
 /// The query post currently wrapped value operator.
@@ -995,7 +1099,7 @@ postfix operator <!
 ///
 /// Usage:
 /// ~~~
-/// let cancel = $someQuery<!.sink(...)
+/// $someQuery<!.sink { ... }
 /// ~~~
 ///
 /// - Parameter query: The query instance used to make the post request.
@@ -1009,8 +1113,8 @@ postfix operator <!
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    query.post(prop: false, newValue: query.wrappedValue)
+public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+    RestQueryResult(query: query, result: query.post(prop: false, newValue: query.wrappedValue))
 }
 
 /// The query post currently wrapped value operator.
@@ -1019,7 +1123,7 @@ public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryEr
 ///
 /// Usage:
 /// ~~~
-/// let cancel = $someQuery<!.sink(...)
+/// $someQuery<!.sink { ... }
 /// ~~~
 ///
 /// - Parameter query: The query instance used to make the post request.
@@ -1035,14 +1139,14 @@ public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryEr
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public postfix func <! <Query, Value>(query: Query) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    query.post(prop: true, newValue: query.wrappedValue)
+public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+    RestQueryResult(query: query, result: query.post(prop: true, newValue: query.wrappedValue))
 }
 
 /// The query post new value operator.
 ///
 /// - Since: Sprint 1
-infix operator <-: AssignmentPrecedence
+infix operator <-: MultiplicationPrecedence
 
 /// The query post new value operator.
 ///
@@ -1050,14 +1154,14 @@ infix operator <-: AssignmentPrecedence
 ///
 /// Usage:
 /// ~~~
-/// let cancel = ($someQuery <- someNewValue).sink(...)
+/// ($someQuery <- someNewValue).sink { ... }
 /// ~~~
 ///
 /// - Parameters:
 ///   - lhs: The query instance used to make the post request.
 ///   - rhs: The value that should be sent as the body part of the `HTTPS` request.
 ///
-/// - Returns: future that will resolve to the new value or an error.
+/// - Returns: A future that will resolve to the new value or an error.
 ///
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` and `Query.QueryValue` should equal `Parent` and `Value`.
@@ -1066,8 +1170,8 @@ infix operator <-: AssignmentPrecedence
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    lhs.post(prop: false, newValue: rhs)
+public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
+    RestQueryResult(query: lhs, result: lhs.post(prop: false, newValue: rhs))
 }
 
 /// The query post new value operator.
@@ -1076,14 +1180,14 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQuery
 ///
 /// Usage:
 /// ~~~
-/// let cancel = ($someQuery <- someNewValue).sink(...)
+/// ($someQuery <- someNewValue).sink { ... }
 /// ~~~
 ///
 /// - Parameters:
 ///   - lhs: The query instance used to make the post request.
 ///   - rhs: The value that should be send as the body part of the `HTTPS` request.
 ///
-/// - Returns: future that will resolve to the new value or an error.
+/// - Returns: A future that will resolve to the new value or an error.
 ///
 /// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
 /// `Query.QueryParent` must conform to the `ParentCodable` protocol.
@@ -1094,8 +1198,50 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQuery
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public func <- <Query, Value>(lhs: Query, rhs: Value) -> Future<Value, RestQueryError> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    lhs.post(prop: true, newValue: rhs)
+public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
+    RestQueryResult(query: lhs, result: lhs.post(prop: true, newValue: rhs))
+}
+
+/// The query results depdents on operator.
+///
+/// - Since: Sprint 1
+infix operator ->>: AdditionPrecedence
+
+/// The query results depdents on operator.
+///
+/// Joins two queries on the success of the left-hand side. If the operation succeeds, the right-hand side is triggered.
+///
+/// Usage:
+/// ~~~
+/// ($someQuery <- someValue ->> $someDependentQuery<!).success {
+///     ...
+/// }
+/// ~~~
+///
+/// - Parameters:
+///   - lhs: The query instance used to make the dependable request.
+///   - rhs: The dependent query that's triggered on the success of the left-hand side.
+///
+/// - Returns: A future that will resolve to the new value or an error.
+///
+/// - Requires: The query type `Query` must conform to the `RestQuery` protocol.
+///
+/// ### Reference
+/// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
+///
+/// - Since: Sprint 1
+func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>) -> RestQueryResult<Query> where Query: RestQuery {
+    RestQueryResult(query: rhs.query, result: Future { promise in
+        lhs.success {
+            rhs.query.cancellable.insert(rhs.result.sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    promise(.failure(error))
+                }
+            }, receiveValue: { value in
+                promise(.success(value))
+            }))
+        }
+    })
 }
 
 /// The nested `nil` in `Binding` coalescing operator.
@@ -1292,7 +1438,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
     /// The metadata associated with this query.
     public var metadata: RestQueryMetadata<Parent, Value>
     /// The `Set` of cancellable query requests.
-    fileprivate var cancellable: Set<AnyCancellable> = Set(minimumCapacity: 1)
+    public var cancellable: Set<AnyCancellable> = Set(minimumCapacity: 1)
 
     /// The value wrapped by the property attached to this query.
     ///
