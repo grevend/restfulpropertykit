@@ -816,6 +816,27 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
         }, receiveValue: { _ in }))
     }
 
+    /// Attaches a subscriber with closure-based behavior.
+    ///
+    /// Use `sink(receiveCompletion:receiveValue:)` to observe values received by the publisher and process them using a closure you specify.
+    /// Upon completion the `sink(receiveCompletion:receiveValue:)` operator’s receiveCompletion closure indicates the successful termination of the stream.
+    ///
+    /// Usage:
+    /// ~~~
+    /// someQueryResult.sink(receiveCompletion: { completion in
+    ///     ...
+    /// }, receiveValue: { value in
+    ///     ...
+    /// })
+    /// ~~~
+    ///
+    /// This method creates the subscriber and immediately requests an unlimited number of values, prior to returning the subscriber.
+    ///
+    /// - Parameters:
+    ///   - receiveCompletion: The closure to execute on completion.
+    ///   - receiveValue: The closure to execute on receipt of a value.
+    ///
+    /// - Since: Sprint 1
     public func sink(receiveCompletion: @escaping ((Subscribers.Completion<RestQueryError>) -> Void), receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
         self.query.cancellable.insert(result.sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue))
     }
