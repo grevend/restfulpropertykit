@@ -1061,9 +1061,7 @@ infix operator ++: MultiplicationPrecedence
 ///
 /// - Since: Sprint 1
 public func ++ <Query, Parent, Value, ParamKey, ParamValue>(lhs: Query, rhs: [ParamKey: ParamValue]) -> Query where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable {
-    // swiftlint:disable colon
     rhs.isEmpty ? lhs : Query(current: lhs, params: lhs.metadata.urlComponents.params.merging(Dictionary(uniqueKeysWithValues: rhs.map { (key: $0.key.description, value: $0.value.description) })) { (_, new) in new })
-    // swiftlint:enable colon
 }
 
 /// The query get request operator.
