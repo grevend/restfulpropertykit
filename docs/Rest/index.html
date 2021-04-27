@@ -80,13 +80,11 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">signin</span><span class="string literal">"</span>, <span class="variable">bearer</span>: <span class="keyword">false</span>) <span class="keyword">var</span> <span class="variable">account</span>: <span class="type">Account</span> = <span class="variable">Account</span>(<span class="variable">email</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>, <span class="variable">password</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>)
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Email placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">email</span>)
         <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Password placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">password</span>)
         <span class="variable">Button</span>(<span class="string literal">"</span><span class="string literal">Sign In</span><span class="string literal">"</span>) {
-            <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$account</span>&gt;?.<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span>}))
+            <span class="keyword">self</span>.<span class="variable">$account</span>&gt;?.<span class="variable">success</span> { ... }
         }
     }
 }
@@ -102,12 +100,9 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruitoftheday</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">fruit</span>: <span class="type">Fruit</span> = <span class="variable">Fruit</span>(<span class="variable">name</span>: <span class="string literal">"</span><span class="string literal">strawberry</span><span class="string literal">"</span>, <span class="variable">size</span>: <span class="number literal">3</span>, <span class="variable">color</span>: <span class="string literal">"</span><span class="string literal">red</span><span class="string literal">"</span>)
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">Text</span>(<span class="variable">fruit</span>.<span class="variable">name</span>)
-            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruit</span>&gt;?
-                .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+            .<span class="variable">onAppear</span> { <span class="keyword">self</span>.<span class="variable">$fruit</span>&gt;?.<span class="variable">sink</span> { <span class="keyword">_</span> <span class="keyword">in</span> } }
     }
 }
 </code></pre></body></html>
@@ -125,12 +120,9 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruits</span><span class="string literal">"</span>, <span class="variable">params</span>: [<span class="string literal">"</span><span class="string literal">limit</span><span class="string literal">"</span>: <span class="number literal">10</span>]) <span class="keyword">var</span> <span class="variable">fruits</span>: <span class="type">Fruits</span> = <span class="variable">Fruits</span>()
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">Text</span>(<span class="variable">fruits</span>.<span class="variable">values</span>[<span class="number literal">0</span>].<span class="variable">name</span>)
-            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?
-               .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+            .<span class="variable">onAppear</span> { <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?.<span class="variable">sink</span> { <span class="keyword">_</span> <span class="keyword">in</span> } }
    }
 }
 </code></pre></body></html>
@@ -152,12 +144,9 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruits</span><span class="string literal">"</span>, <span class="variable">parent</span>: <span class="type">Fruits</span>.<span class="keyword">self</span>, <span class="variable">prop</span>: \.<span class="variable">values</span>) <span class="keyword">var</span> <span class="variable">fruits</span>: [<span class="type">Fruit</span>] = []
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">Text</span>(<span class="variable">fruits</span>[<span class="number literal">0</span>].<span class="variable">name</span>)
-            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?
-               .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+            .<span class="variable">onAppear</span> { <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?.<span class="variable">sink</span> { <span class="keyword">_</span> <span class="keyword">in</span> } }
     }
 }
 </code></pre></body></html>
@@ -179,12 +168,9 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">fruits</span><span class="string literal">"</span>, <span class="variable">params</span>: [<span class="string literal">"</span><span class="string literal">limit</span><span class="string literal">"</span>: <span class="number literal">10</span>], <span class="variable">parent</span>: <span class="type">Fruits</span>.<span class="keyword">self</span>, <span class="variable">prop</span>: \.<span class="variable">values</span>) <span class="keyword">var</span> <span class="variable">fruits</span>: [<span class="type">Fruit</span>] = []
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">Text</span>(<span class="variable">fruits</span>[<span class="number literal">0</span>].<span class="variable">name</span>)
-            .<span class="variable">onAppear</span> { <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?
-               .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span> })) }
+            .<span class="variable">onAppear</span> { <span class="keyword">self</span>.<span class="variable">$fruits</span>&gt;?.<span class="variable">sink</span> { <span class="keyword">_</span> <span class="keyword">in</span> } }
     }
 }
 </code></pre></body></html>
@@ -198,14 +184,11 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">signup</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">account</span>: <span class="type">Account</span> = <span class="variable">Account</span>(<span class="variable">email</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>, <span class="variable">password</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>)
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Email placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">email</span>)
         <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Password placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">password</span>)
         <span class="variable">Button</span>(<span class="string literal">"</span><span class="string literal">Sign Up</span><span class="string literal">"</span>) {
-            <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: <span class="keyword">self</span>.<span class="variable">$account</span>&lt;!
-                .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span>}))
+            <span class="keyword">self</span>.<span class="variable">$account</span>&lt;!.<span class="variable">success</span> { ... }
         }
     }
 }
@@ -220,19 +203,16 @@ type marshalled.</p>
 <span class="keyword">struct</span> <span class="type">SomeView</span>: <span class="type">View</span> {
     <span class="attribute">@</span><span class="type">Rest</span>(<span class="variable">path</span>: <span class="string literal">"</span><span class="string literal">signup</span><span class="string literal">"</span>) <span class="keyword">var</span> <span class="variable">account</span>: <span class="type">Account</span> = <span class="variable">Account</span>(<span class="variable">email</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>, <span class="variable">password</span>: <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>)
 
-    <span class="keyword">private</span> <span class="keyword">var</span> <span class="variable">cancelable</span>: <a href="https://doc.restfulpropertykit.grevend.dev/RestMutableValueReference"><span class="type">RestMutableValueReference</span></a>&lt;<span class="type">AnyCancellable</span>?&gt; = <span class="variable">RestMutableValueReference</span>(<span class="variable">value</span>: <span class="keyword">nil</span>)
-
     <span class="keyword">var</span> <span class="variable">body</span>: <span class="keyword">some</span> <span class="type">View</span> {
         <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Email placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">email</span>)
         <span class="variable">TextField</span>(<span class="string literal">"</span><span class="string literal">Password placeholder</span><span class="string literal">"</span>, <span class="variable">text</span>: <span class="keyword">self</span>.<span class="variable">$account</span>.<span class="variable">password</span>)
         <span class="variable">Button</span>(<span class="string literal">"</span><span class="string literal">Sign Up</span><span class="string literal">"</span>) {
-            <span class="variable">cancelable</span>.<span class="variable">update</span>(<span class="variable">with</span>: (<span class="keyword">self</span>.<span class="variable">$account</span> &lt;- <span class="variable">someNewAccount</span>)
-                .<span class="variable">sink</span>(<span class="variable">receiveCompletion</span>: { <span class="keyword">_</span> <span class="keyword">in</span> }, <span class="variable">receiveValue</span>: { <span class="keyword">_</span> <span class="keyword">in</span>}))
+            (<span class="keyword">self</span>.<span class="variable">$account</span> &lt;- <span class="variable">someNewAccount</span>).<span class="variable">success</span> { ... }
         }
     }
 }
 </code></pre></body></html>
-<h3>References</h3>
+<h1>References</h1>
 
 <p><a href="https://docs.swift.org/swift-book/LanguageGuide/Properties.html#ID617">Property Wrapper</a></p>
 
@@ -601,7 +581,7 @@ query mutations.</p>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-25T16:26:07+0000">April 25, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-04-27T11:30:33+0000">April 27, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>
