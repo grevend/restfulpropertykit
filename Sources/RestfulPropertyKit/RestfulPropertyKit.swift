@@ -1331,6 +1331,30 @@ public final class RestConfiguration {
     fileprivate static var mockRequestProvider: RestRequestProvider = URLSession.shared
 }
 
+/// [EXPERIMENTAL] Mocks all requests made in the block closure using the given *RestRequestProvider*.
+///
+/// Usage:
+/// ~~~
+/// restMock(someMockProvider) {
+///     someQuery <- someValue
+/// }
+/// ~~~
+///
+/// - Parameters:
+///   - provider: The mock request provider.
+///   - block: The computation using mocked requests.
+///
+/// - Returns: The result of the computation inside of the closure.
+///
+/// - Since: Sprint 1
+public func _restMock<Result>(with provider: RestRequestProvider, block: (() -> Result)) -> Result {
+    RestConfiguration.mockRequestProvider = provider
+    RestConfiguration.mock = true
+    let result = block()
+    RestConfiguration.mock = false
+    return result
+}
+
 /// This structure constructs URLs according to RFC 3986.
 ///
 /// ### Reference
