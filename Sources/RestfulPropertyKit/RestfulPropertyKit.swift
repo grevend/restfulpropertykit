@@ -1285,6 +1285,16 @@ public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 public final class RestConfiguration {
     /// The URL host component.
     public static var host: String = ""
+    /// Should the requests be mocked?
+    fileprivate static var mock: Bool = false
+    /// The default request provider (*URLSession.shared*) or a mocked variation.
+    ///
+    /// - Since: Sprint 1
+    public static var requestProvider: RestRequestProvider {
+        mock ? mockRequestProvider : URLSession.shared
+    }
+    /// The mocked request provider.
+    fileprivate static var mockRequestProvider: RestRequestProvider = URLSession.shared
 }
 
 /// This structure constructs URLs according to RFC 3986.
@@ -1515,7 +1525,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
 
         urlRequest.httpMethod = "Get"
 
-        return URLSession.shared.dataTaskPublisher(for: urlRequest)
+        return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
             .map { $0.data }
             .decode(type: metadata.parent, decoder: JSONDecoder())
             .mapError { error in
@@ -1598,7 +1608,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
                 .eraseToAnyPublisher()
         }
 
-        return URLSession.shared.dataTaskPublisher(for: urlRequest)
+        return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
             .map { $0 }
             .mapError { RestQueryError.url($0) }
             .convertToResult()
