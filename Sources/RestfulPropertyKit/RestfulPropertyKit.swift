@@ -785,6 +785,15 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     /// The query result as a future that will resolve to the new value or an error.
     public let result: Future<QueryType.QueryValue, RestQueryError>
 
+    /// Creates a *RestQueryResult* instance.
+    ///
+    /// - Parameters:
+    ///   - query: The associated query.
+    ///   - result: A future that will resolve to the new value or an error.
+    ///
+    /// - Returns: A new *RestQueryType* instance.
+    ///
+    /// - Since: Sprint 1
     fileprivate init(query: QueryType, result: Future<QueryType.QueryValue, RestQueryError>) {
         self.query = query
         self.result = result
