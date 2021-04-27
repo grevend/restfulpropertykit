@@ -1180,7 +1180,7 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> 
 ///
 /// Usage:
 /// ~~~
-/// let cancel = ($someQuery <- someNewValue).sink(...)
+/// ($someQuery <- someNewValue).sink { ... }
 /// ~~~
 ///
 /// - Parameters:
