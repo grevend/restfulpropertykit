@@ -185,6 +185,22 @@ public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     }
 }
 
+/// The protocol used for all *REST* request provider implementations.
+///
+/// - Since: Sprint 1
+public protocol RestRequestProvider {
+    /// Returns a publisher that wraps a URL session for a given URL request.
+    ///
+    /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
+    ///
+    /// - Parameter request: The URL request for which to create a request.
+    ///
+    /// - Returns: A publisher that wraps a data task for the URL request.
+    ///
+    /// - Since: Sprint 1
+    func restRequestPublisher(for request: URLRequest) -> AnyPublisher<URLSession.DataTaskPublisher.Output, URLError>
+}
+
 /// A collection of internal Publisher extension methods to simplify the internal REST API logic without
 /// shared protocol `where` clause.
 ///
