@@ -780,6 +780,7 @@ public struct RestBearerType: Codable {
 ///
 /// - Since: Sprint 1
 public final class RestQueryResult<QueryType> where QueryType: RestQuery {
+    /// The query associated with this result.
     public let query: QueryType
     public let result: Future<QueryType.QueryValue, RestQueryError>
 
