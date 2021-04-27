@@ -201,6 +201,24 @@ public protocol RestRequestProvider {
     func restRequestPublisher(for request: URLRequest) -> AnyPublisher<URLSession.DataTaskPublisher.Output, URLError>
 }
 
+/// Default *RestRequestProvider* implementation for *URLSession*.
+///
+/// - Since: Sprint 1
+extension URLSession: RestRequestProvider {
+    /// Returns a publisher that wraps a URL session for a given URL request.
+    ///
+    /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
+    ///
+    /// - Parameter request: The URL request for which to create a request.
+    ///
+    /// - Returns: A publisher that wraps a data task for the URL request.
+    ///
+    /// - Since: Sprint 1
+    public func restRequestPublisher(for request: URLRequest) -> AnyPublisher<DataTaskPublisher.Output, URLError> {
+        self.dataTaskPublisher(for: request).eraseToAnyPublisher()
+    }
+}
+
 /// A collection of internal Publisher extension methods to simplify the internal REST API logic without
 /// shared protocol `where` clause.
 ///
