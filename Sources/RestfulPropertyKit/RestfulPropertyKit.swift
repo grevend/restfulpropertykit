@@ -155,7 +155,7 @@ public class RestValueReference<Value> {
 }
 
 /// The mutable counterpart of *RestValueReference\<Value\>*. Subclassing is not possible since it is
-/// final and the value setter in *RestValueReference* is `fileprivate`.
+/// final and the value setter in *RestValueReference* is *fileprivate*.
 ///
 /// Class-based value wrapper to easily reference and mutate the value while avoiding copying the data
 /// in certain contexts.
