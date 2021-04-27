@@ -1099,7 +1099,7 @@ postfix operator <!
 ///
 /// Usage:
 /// ~~~
-/// let cancel = $someQuery<!.sink(...)
+/// $someQuery<!.sink { ... }
 /// ~~~
 ///
 /// - Parameter query: The query instance used to make the post request.
