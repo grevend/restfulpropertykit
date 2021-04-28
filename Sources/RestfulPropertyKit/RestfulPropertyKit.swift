@@ -185,6 +185,40 @@ public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     }
 }
 
+/// The protocol used for all *REST* request provider implementations.
+///
+/// - Since: Sprint 1
+public protocol RestRequestProvider {
+    /// Returns a publisher that wraps a URL session for a given URL request.
+    ///
+    /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
+    ///
+    /// - Parameter request: The URL request for which to create a request.
+    ///
+    /// - Returns: A publisher that wraps a data task for the URL request.
+    ///
+    /// - Since: Sprint 1
+    func restRequestPublisher(for request: URLRequest) -> AnyPublisher<URLSession.DataTaskPublisher.Output, URLError>
+}
+
+/// Default *RestRequestProvider* implementation for *URLSession*.
+///
+/// - Since: Sprint 1
+extension URLSession: RestRequestProvider {
+    /// Returns a publisher that wraps a URL session for a given URL request.
+    ///
+    /// The publisher publishes data when the task completes, or terminates if the task fails with an error.
+    ///
+    /// - Parameter request: The URL request for which to create a request.
+    ///
+    /// - Returns: A publisher that wraps a data task for the URL request.
+    ///
+    /// - Since: Sprint 1
+    public func restRequestPublisher(for request: URLRequest) -> AnyPublisher<DataTaskPublisher.Output, URLError> {
+        self.dataTaskPublisher(for: request).eraseToAnyPublisher()
+    }
+}
+
 /// A collection of internal Publisher extension methods to simplify the internal REST API logic without
 /// shared protocol `where` clause.
 ///
@@ -1027,9 +1061,7 @@ infix operator ++: MultiplicationPrecedence
 ///
 /// - Since: Sprint 1
 public func ++ <Query, Parent, Value, ParamKey, ParamValue>(lhs: Query, rhs: [ParamKey: ParamValue]) -> Query where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable {
-    // swiftlint:disable colon
     rhs.isEmpty ? lhs : Query(current: lhs, params: lhs.metadata.urlComponents.params.merging(Dictionary(uniqueKeysWithValues: rhs.map { (key: $0.key.description, value: $0.value.description) })) { (_, new) in new })
-    // swiftlint:enable colon
 }
 
 /// The query get request operator.
@@ -1285,7 +1317,44 @@ public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 public final class RestConfiguration {
     /// The URL host component.
     public static var host: String = ""
+    /// Should the requests be mocked?
+    fileprivate static var mock: Bool = false
+    /// The default request provider (*URLSession.shared*) or a mocked variation.
+    ///
+    /// - Since: Sprint 1
+    public static var requestProvider: RestRequestProvider {
+        mock ? mockRequestProvider : URLSession.shared
+    }
+    /// The mocked request provider.
+    fileprivate static var mockRequestProvider: RestRequestProvider = URLSession.shared
 }
+
+// swiftlint:disable identifier_name
+
+/// [EXPERIMENTAL] Mocks all requests made in the block closure using the given *RestRequestProvider*.
+///
+/// Usage:
+/// ~~~
+/// restMock(someMockProvider) {
+///     someQuery <- someValue
+/// }
+/// ~~~
+///
+/// - Parameters:
+///   - provider: The mock request provider.
+///   - block: The computation using mocked requests.
+///
+/// - Returns: The result of the computation inside of the closure.
+///
+/// - Since: Sprint 1
+public func _restMock<Result>(with provider: RestRequestProvider, block: (() -> Result)) -> Result {
+    RestConfiguration.mockRequestProvider = provider
+    RestConfiguration.mock = true
+    let result = block()
+    RestConfiguration.mock = false
+    return result
+}
+// swiftlint:enable identifier_name
 
 /// This structure constructs URLs according to RFC 3986.
 ///
@@ -1515,7 +1584,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
 
         urlRequest.httpMethod = "Get"
 
-        return URLSession.shared.dataTaskPublisher(for: urlRequest)
+        return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
             .map { $0.data }
             .decode(type: metadata.parent, decoder: JSONDecoder())
             .mapError { error in
@@ -1598,7 +1667,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
                 .eraseToAnyPublisher()
         }
 
-        return URLSession.shared.dataTaskPublisher(for: urlRequest)
+        return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
             .map { $0 }
             .mapError { RestQueryError.url($0) }
             .convertToResult()
