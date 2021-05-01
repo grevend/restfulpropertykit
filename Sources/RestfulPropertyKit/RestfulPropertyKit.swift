@@ -831,6 +831,7 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     /// - Since: Sprint 1
     public func success(received: @escaping (() -> Void)) {
         self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            internalDebugPrint("Success: ", completion)
             guard case .failure = completion else {
                 received()
                 return
@@ -856,6 +857,7 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     /// - Since: Sprint 1
     public func failure(received: @escaping (() -> Void)) {
         self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            internalDebugPrint("Failure: ", completion)
             if case .failure = completion {
                 received()
             }
@@ -904,7 +906,9 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     ///
     /// - Since: Sprint 1
     public func sink(receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
-        self.query.cancellable.insert(result.sink(receiveCompletion: { _ in }, receiveValue: receiveValue))
+        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+            internalDebugPrint("Sink Ignored Completion: ", completion)
+        }, receiveValue: receiveValue))
     }
 }
 
@@ -1266,10 +1270,12 @@ public func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>
     RestQueryResult(query: rhs.query, result: Future { promise in
         lhs.success {
             rhs.query.cancellable.insert(rhs.result.sink(receiveCompletion: { completion in
+                internalDebugPrint("Depends On Completion: ", completion)
                 if case .failure(let error) = completion {
                     promise(.failure(error))
                 }
             }, receiveValue: { value in
+                internalDebugPrint("Depends On Success: ", value)
                 promise(.success(value))
             }))
         }
@@ -1317,6 +1323,8 @@ public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 public final class RestConfiguration {
     /// The URL host component.
     public static var host: String = ""
+    /// Is debug session?
+    public static var debug: Bool = false
     /// Should the requests be mocked?
     fileprivate static var mock: Bool = false
     /// The default request provider (*URLSession.shared*) or a mocked variation.
@@ -1327,6 +1335,21 @@ public final class RestConfiguration {
     }
     /// The mocked request provider.
     fileprivate static var mockRequestProvider: RestRequestProvider = URLSession.shared
+}
+
+/// Only prints the given message in debug mode.
+///
+/// - Parameters:
+///   -  message: The message to print.
+///   - value: The typed value part of the message.
+///
+/// - Since: Sprint 1
+fileprivate func internalDebugPrint<T>(_ message: String, _ value: T) {
+    if RestConfiguration.debug {
+        print("[RestfulPropertyKit]: \(message)")
+        debugPrint(value)
+        print("\n")
+    }
 }
 
 // swiftlint:disable identifier_name
@@ -1576,13 +1599,17 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
+        internalDebugPrint("Request URL: ", self.metadata.urlComponents.url())
+
         if self.metadata.bearer && self.metadata.token != nil {
             urlRequest.setValue("Bearer \(self.metadata.token!.value)", forHTTPHeaderField: "Authorization")
+            internalDebugPrint("Authorization: Bearer ", self.metadata.token?.value)
         } else {
             return Fail(error: .bearer).eraseToAnyPublisher()
         }
 
-        urlRequest.httpMethod = "Get"
+        urlRequest.httpMethod = "GET"
+        internalDebugPrint("Http Method: ", urlRequest.httpMethod)
 
         return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
             .map { $0.data }
@@ -1628,6 +1655,8 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
                     do {
                         let token = try JSONDecoder().decode(RestBearerToken.self, from: data)
 
+                        internalDebugPrint("Received Bearer Token: ", token.value)
+
                         UserDefaults.standard.set(token.value, forKey: "bearerToken")
                         UserDefaults.standard.set(token.type.value, forKey: "bearerType")
                     } catch let error {
@@ -1654,14 +1683,24 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
+        internalDebugPrint("Request URL: ", self.metadata.urlComponents.url(params: false))
+
         if self.metadata.bearer && self.metadata.token != nil {
             urlRequest.setValue("Bearer \(self.metadata.token!.value)", forHTTPHeaderField: "Authorization")
+            internalDebugPrint("Authorization: Bearer ", self.metadata.token?.value)
         }
 
         urlRequest.httpMethod = "POST"
+        internalDebugPrint("Http Method: ", urlRequest.httpBody)
 
         do {
             try urlRequest.httpBody = JSONEncoder().encode(body)
+
+            if let body = urlRequest.httpBody {
+                internalDebugPrint("Http Body: ", String(decoding: body, as: UTF8.self))
+            } else {
+                internalDebugPrint("missing request.httpBody for post", "")
+            }
         } catch let error {
             return Just(.failure(error is DecodingError ? .decode((error as? DecodingError)!) : .other(error)))
                 .eraseToAnyPublisher()
