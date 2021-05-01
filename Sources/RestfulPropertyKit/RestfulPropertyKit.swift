@@ -1346,9 +1346,8 @@ public final class RestConfiguration {
 /// - Since: Sprint 1
 fileprivate func internalDebugPrint<T>(_ message: String, _ value: T) {
     if RestConfiguration.debug {
-        print("[RestfulPropertyKit]: \(message)")
+        print("[RestfulPropertyKit] \(message)")
         debugPrint(value)
-        print("\n")
     }
 }
 
@@ -1648,6 +1647,8 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
                 }
 
                 guard (200 ... 299) ~= castReponse.statusCode else {
+                    internalDebugPrint("Http Reponse Body: ", String(data: data, encoding: .utf8))
+
                     return .failure(.statusCode(castReponse.statusCode))
                 }
 
@@ -1691,7 +1692,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         }
 
         urlRequest.httpMethod = "POST"
-        internalDebugPrint("Http Method: ", urlRequest.httpBody)
+        internalDebugPrint("Http Method: ", urlRequest.httpMethod)
 
         do {
             try urlRequest.httpBody = JSONEncoder().encode(body)
