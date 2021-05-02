@@ -1598,10 +1598,10 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-		internalDebugPrint("Object Parent Type: ", self.metadata.parent)
-		internalDebugPrint("Object Property: ", self.metadata.prop)
-		internalDebugPrint("Object Bindings: ", self.metadata.bindings)
-		internalDebugPrint("Send Bearer: ", self.metadata.bearer)
+        internalDebugPrint("Object Parent Type: ", self.metadata.parent)
+        internalDebugPrint("Object Property: ", self.metadata.prop)
+        internalDebugPrint("Object Bindings: ", self.metadata.bindings)
+        internalDebugPrint("Send Bearer: ", self.metadata.bearer)
         internalDebugPrint("Request URL: ", self.metadata.urlComponents.url())
 
         if self.metadata.bearer && self.metadata.token != nil {
@@ -1688,10 +1688,10 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
-		internalDebugPrint("Object Parent Type: ", self.metadata.parent)
-		internalDebugPrint("Object Property: ", self.metadata.prop)
-		internalDebugPrint("Object Bindings: ", self.metadata.bindings)
-		internalDebugPrint("Send Bearer: ", self.metadata.bearer)
+        internalDebugPrint("Object Parent Type: ", self.metadata.parent)
+        internalDebugPrint("Object Property: ", self.metadata.prop)
+        internalDebugPrint("Object Bindings: ", self.metadata.bindings)
+        internalDebugPrint("Send Bearer: ", self.metadata.bearer)
         internalDebugPrint("Request URL: ", self.metadata.urlComponents.url(params: false))
 
         if self.metadata.bearer && self.metadata.token != nil {
