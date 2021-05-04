@@ -122,7 +122,7 @@ public extension ParentCodable {
     /// ~~~
     ///
     /// - Since: Sprint 1
-    fileprivate static func dynamicWrap(child: Any) -> Any {
+    static func dynamicWrap(child: Any) -> Any {
         // swiftlint:disable force_cast
         self.wrap(child: child as! ChildCodable)
         // swiftlint:enable force_cast
@@ -215,7 +215,8 @@ extension URLSession: RestRequestProvider {
     ///
     /// - Since: Sprint 1
     public func restRequestPublisher(for request: URLRequest) -> AnyPublisher<DataTaskPublisher.Output, URLError> {
-        self.dataTaskPublisher(for: request).eraseToAnyPublisher()
+        internalDebugPrint("Request Publisher for Request: ", request)
+        return self.dataTaskPublisher(for: request).eraseToAnyPublisher()
     }
 }
 
@@ -1065,7 +1066,8 @@ infix operator ++: MultiplicationPrecedence
 ///
 /// - Since: Sprint 1
 public func ++ <Query, Parent, Value, ParamKey, ParamValue>(lhs: Query, rhs: [ParamKey: ParamValue]) -> Query where Query: RestQuery, Query.QueryParent == Parent, Query.QueryValue == Value, ParamKey: CustomStringConvertible, ParamKey: Hashable, ParamValue: CustomStringConvertible, ParamValue: Hashable {
-    rhs.isEmpty ? lhs : Query(current: lhs, params: lhs.metadata.urlComponents.params.merging(Dictionary(uniqueKeysWithValues: rhs.map { (key: $0.key.description, value: $0.value.description) })) { (_, new) in new })
+    internalDebugPrint("Concat Query Parameters: ", rhs)
+    return rhs.isEmpty ? lhs : Query(current: lhs, params: lhs.metadata.urlComponents.params.merging(Dictionary(uniqueKeysWithValues: rhs.map { (key: $0.key.description, value: $0.value.description) })) { (_, new) in new })
 }
 
 /// The query get request operator.
@@ -1094,7 +1096,8 @@ postfix operator >?
 ///
 /// - Since: Sprint 1
 public postfix func >? <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    RestQueryResult(query: query, result: query.get(prop: false))
+    internalDebugPrint("Wait for Result of: ", query)
+    return RestQueryResult(query: query, result: query.get(prop: false))
 }
 
 /// The query get request operator.
@@ -1121,7 +1124,8 @@ public postfix func >? <Query, Value>(query: Query) -> RestQueryResult<Query> wh
 ///
 /// - Since: Sprint 1
 public postfix func >? <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    RestQueryResult(query: query, result: query.get(prop: true))
+    internalDebugPrint("Wait for Result of: ", query)
+    return RestQueryResult(query: query, result: query.get(prop: true))
 }
 
 /// The query post currently wrapped value operator.
@@ -1150,7 +1154,8 @@ postfix operator <!
 ///
 /// - Since: Sprint 1
 public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    RestQueryResult(query: query, result: query.post(prop: false, newValue: query.wrappedValue))
+    internalDebugPrint("Post existing Value: ", query.wrappedValue)
+    return RestQueryResult(query: query, result: query.post(prop: false, newValue: query.wrappedValue))
 }
 
 /// The query post currently wrapped value operator.
@@ -1176,7 +1181,8 @@ public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> wh
 ///
 /// - Since: Sprint 1
 public postfix func <! <Query, Value>(query: Query) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    RestQueryResult(query: query, result: query.post(prop: true, newValue: query.wrappedValue))
+    internalDebugPrint("Post existing Value: ", query.wrappedValue)
+    return RestQueryResult(query: query, result: query.post(prop: true, newValue: query.wrappedValue))
 }
 
 /// The query post new value operator.
@@ -1207,7 +1213,8 @@ infix operator <-: MultiplicationPrecedence
 ///
 /// - Since: Sprint 1
 public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent == Query.QueryValue, Value == Query.QueryValue {
-    RestQueryResult(query: lhs, result: lhs.post(prop: false, newValue: rhs))
+    internalDebugPrint("Post new Value: ", rhs)
+    return RestQueryResult(query: lhs, result: lhs.post(prop: false, newValue: rhs))
 }
 
 /// The query post new value operator.
@@ -1235,7 +1242,8 @@ public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> 
 ///
 /// - Since: Sprint 1
 public func <- <Query, Value>(lhs: Query, rhs: Value) -> RestQueryResult<Query> where Query: RestQuery, Query.QueryParent: ParentCodable, Query.QueryParent.ChildCodable == Query.QueryValue, Query.QueryValue == Value {
-    RestQueryResult(query: lhs, result: lhs.post(prop: true, newValue: rhs))
+    internalDebugPrint("Post new Value: ", rhs)
+    return RestQueryResult(query: lhs, result: lhs.post(prop: true, newValue: rhs))
 }
 
 /// The query results depdents on operator.
@@ -1267,15 +1275,16 @@ infix operator ->>: AdditionPrecedence
 ///
 /// - Since: Sprint 1
 public func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>) -> RestQueryResult<Query> where Query: RestQuery {
-    RestQueryResult(query: rhs.query, result: Future { promise in
+    internalDebugPrint("Depends on Result of: ", lhs)
+    return RestQueryResult(query: rhs.query, result: Future { promise in
         lhs.success {
             rhs.query.cancellable.insert(rhs.result.sink(receiveCompletion: { completion in
-                internalDebugPrint("Depends On Completion: ", completion)
+                internalDebugPrint("Depends on Completion: ", completion)
                 if case .failure(let error) = completion {
                     promise(.failure(error))
                 }
             }, receiveValue: { value in
-                internalDebugPrint("Depends On Success: ", value)
+                internalDebugPrint("Depends on Success: ", value)
                 promise(.success(value))
             }))
         }
