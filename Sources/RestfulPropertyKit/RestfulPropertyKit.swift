@@ -1626,7 +1626,10 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         internalDebugPrint("Http Method: ", urlRequest.httpMethod)
 
         return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
-            .map { $0.data }
+            .map {
+                internalDebugPrint("Fetched Data: ", String(decoding: $0.data, as: UTF8.self))
+                return $0.data
+            }
             .decode(type: metadata.parent, decoder: JSONDecoder())
             .mapError { error in
                 switch error {
