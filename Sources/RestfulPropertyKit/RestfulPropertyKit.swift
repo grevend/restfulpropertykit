@@ -1332,6 +1332,8 @@ public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
 public final class RestConfiguration {
     /// The URL host component.
     public static var host: String = ""
+    /// The request timeout interval.
+    public static var timeoutInterval: TimeInterval = 10000
     /// Is debug session?
     public static var debug: Bool = false
     /// Should the requests be mocked?
@@ -1603,7 +1605,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
     ///
     /// - Since: Sprint 1
     private func requestGet() -> AnyPublisher<Parent, RestQueryError> {
-        var urlRequest = URLRequest(url: self.metadata.urlComponents.url())
+        var urlRequest = URLRequest(url: self.metadata.urlComponents.url(), timeoutInterval: RestConfiguration.timeoutInterval)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
@@ -1693,7 +1695,7 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
     ///
     /// - Since: Sprint 1
     private func requestPost(newValue: Value, body: Parent) -> AnyPublisher<Result<Value, RestQueryError>, Never> {
-        var urlRequest = URLRequest(url: self.metadata.urlComponents.url(params: false))
+        var urlRequest = URLRequest(url: self.metadata.urlComponents.url(params: false), timeoutInterval: RestConfiguration.timeoutInterval)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
