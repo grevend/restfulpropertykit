@@ -831,13 +831,13 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     ///
     /// - Since: Sprint 1
     public func success(received: @escaping (() -> Void)) {
-        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+        self.sink(receiveCompletion: { completion in
             internalDebugPrint("Success: ", completion)
             guard case .failure = completion else {
                 received()
                 return
             }
-        }, receiveValue: { _ in }))
+        }, receiveValue: { _ in })
     }
 
     /// Attaches a subscriber with closure-based behavior.
@@ -857,12 +857,12 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     ///
     /// - Since: Sprint 1
     public func failure(received: @escaping (() -> Void)) {
-        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+        self.sink(receiveCompletion: { completion in
             internalDebugPrint("Failure: ", completion)
             if case .failure = completion {
                 received()
             }
-        }, receiveValue: { _ in }))
+        }, receiveValue: { _ in })
     }
 
     /// Attaches a subscriber with closure-based behavior.
@@ -887,7 +887,18 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     ///
     /// - Since: Sprint 1
     public func sink(receiveCompletion: @escaping ((Subscribers.Completion<RestQueryError>) -> Void), receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
-        self.query.cancellable.insert(result.sink(receiveCompletion: receiveCompletion, receiveValue: receiveValue))
+        var cancellable: AnyCancellable? = nil
+
+        cancellable = result.handleEvents(receiveCancel: {
+            internalDebugPrint("Received Cancel", "")
+            receiveCompletion(.failure(.cancelled))
+            self.query.cancellable.remove(cancellable!)
+        }).sink(receiveCompletion: { completion in
+            receiveCompletion(completion)
+            self.query.cancellable.remove(cancellable!)
+        }, receiveValue: receiveValue)
+
+        self.query.cancellable.insert(cancellable!)
     }
 
     /// Attaches a subscriber with closure-based behavior.
@@ -907,9 +918,9 @@ public final class RestQueryResult<QueryType> where QueryType: RestQuery {
     ///
     /// - Since: Sprint 1
     public func sink(receiveValue: @escaping ((QueryType.QueryValue) -> Void)) {
-        self.query.cancellable.insert(result.sink(receiveCompletion: { completion in
+        self.sink(receiveCompletion: { completion in
             internalDebugPrint("Sink Ignored Completion: ", completion)
-        }, receiveValue: receiveValue))
+        }, receiveValue: receiveValue)
     }
 }
 
@@ -1022,6 +1033,8 @@ public enum RestQueryError: Error {
     case dynamicWrapDispatch
     /// The construction of the request URL failed.
     case url(URLError)
+    /// The validation of the request URL failed.
+    case urlValidation
     /// The request result did not contain a response.
     case urlReponse
     /// The status code was not in the expected range.
@@ -1032,6 +1045,8 @@ public enum RestQueryError: Error {
     case decode(DecodingError)
     /// The encoding of the query content failed.
     case encode(EncodingError)
+    /// The query request was cancelled.
+    case cancelled
     /// Some other issue.
     case other(Error)
 }
@@ -1358,7 +1373,13 @@ public final class RestConfiguration {
 fileprivate func internalDebugPrint<T>(_ message: String, _ value: T) {
     if RestConfiguration.debug {
         print("[RestfulPropertyKit] \(message)")
-        debugPrint(value)
+        if let str = value as? String {
+            if !str.isEmpty {
+                print(str)
+            }
+        } else {
+            debugPrint(value)
+        }
     }
 }
 
@@ -1449,6 +1470,27 @@ public struct RestURLComponents {
         self.init(scheme: current.scheme, host: current.host, path: current.path, params: params)
     }
 
+    /// Validates a link given as a `String`.
+    ///
+    /// - Parameter text: The link text.
+    ///
+    /// - Returns: If the link is valid.
+    ///
+    /// - Since: Sprint 1
+    fileprivate func isValidLink(link text: String?) -> Bool {
+        guard let link = text else { return false }
+
+        let types: NSTextCheckingResult.CheckingType = [.link]
+        let detector = try? NSDataDetector(types: types.rawValue)
+
+        guard (detector != nil && link.count > 0) else { return false }
+
+        if detector!.numberOfMatches(in: link, options: NSRegularExpression.MatchingOptions(rawValue: 0), range: NSMakeRange(0, link.count)) > 0 {
+            return true
+        }
+        return false
+    }
+
     /// Returns a constructed URL from its constituent parts.
     ///
     /// - Parameter params: Should the constructed query include parameters.
@@ -1456,17 +1498,36 @@ public struct RestURLComponents {
     /// - Returns: The constructed URL.
     ///
     /// - Since: Sprint 1
-    public func url(params: Bool = true) -> URL {
+    public func url(params: Bool = true) -> URL? {
+        guard !self.scheme.striped().isEmpty && !self.host.striped().isEmpty else { return nil }
+
         var components = URLComponents()
 
-        components.scheme = self.scheme
-        components.host = self.host
-        components.path = self.path.starts(with: "/") ? self.path : "/" + self.path
-        components.queryItems = params ? self.params.map {
+        components.scheme = self.scheme.striped()
+        components.host = self.host.striped()
+        components.path = self.path.striped().starts(with: "/") ? self.path.striped() : "/" + self.path.striped()
+        components.queryItems = params && !self.params.isEmpty ? self.params.map {
             URLQueryItem(name: $0.key, value: $0.value)
         } : nil
 
-        return components.url!
+        guard isValidLink(link: components.url?.absoluteString) else { return nil }
+
+        return components.url
+    }
+}
+
+/// String extension that provides a custom `trimmingCharacters` implementation.
+///
+/// - Since: Sprint 1
+fileprivate extension String {
+    /// Returns a new string made by removing from both ends of the `String` characters contained
+    /// in the `CharacterSet.whitespacesAndNewlines` set.
+    ///
+    /// - Returns: The newly created string.
+    ///
+    /// - Since: Sprint 1
+    func striped() -> String {
+        self.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
 }
 
@@ -1605,7 +1666,11 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
     ///
     /// - Since: Sprint 1
     private func requestGet() -> AnyPublisher<Parent, RestQueryError> {
-        var urlRequest = URLRequest(url: self.metadata.urlComponents.url(), timeoutInterval: RestConfiguration.timeoutInterval)
+        guard let url = self.metadata.urlComponents.url() else {
+            return Fail(error: .urlValidation).eraseToAnyPublisher()
+        }
+
+        var urlRequest = URLRequest(url: url, timeoutInterval: RestConfiguration.timeoutInterval)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
@@ -1698,7 +1763,11 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
     ///
     /// - Since: Sprint 1
     private func requestPost(newValue: Value, body: Parent) -> AnyPublisher<Result<Value, RestQueryError>, Never> {
-        var urlRequest = URLRequest(url: self.metadata.urlComponents.url(params: false), timeoutInterval: RestConfiguration.timeoutInterval)
+        guard let url = self.metadata.urlComponents.url(params: false) else {
+            return Just(.failure(.urlValidation)).eraseToAnyPublisher()
+        }
+
+        var urlRequest = URLRequest(url: url, timeoutInterval: RestConfiguration.timeoutInterval)
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
 
@@ -1711,6 +1780,8 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         if self.metadata.bearer && self.metadata.token != nil {
             urlRequest.setValue("Bearer \(self.metadata.token!.value)", forHTTPHeaderField: "Authorization")
             internalDebugPrint("Authorization: Bearer ", self.metadata.token?.value)
+        } else if self.metadata.bearer {
+            return Just(.failure(.bearer)).eraseToAnyPublisher()
         }
 
         urlRequest.httpMethod = "POST"
