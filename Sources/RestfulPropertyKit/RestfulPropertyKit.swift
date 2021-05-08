@@ -136,11 +136,11 @@ public extension ParentCodable {
 /// property wrapper to internal logic, requiring a reference to the value even if it is a struct or enum.
 ///
 /// - Since: Sprint 1
-public class RestValueReference<Value> {
+public class RestValueReference<Value>: ObservableObject {
     /// The referenced value. Visibility is set to `fileprivate` to allow the implementation of
     /// `RestMutableValueReference<Value>` while restricting other subclasses from modifying
     /// the referenced value.
-    fileprivate(set) var value: Value
+    @Published fileprivate(set) var value: Value
 
     /// Returns a new instance of *RestValueReference* containing a value of type `Value`.
     ///
@@ -627,9 +627,9 @@ public struct RestBearerType: Codable {
 /// - Requires: The parent type `Parent` and the value type `Value` must conform to protocol `Codable`.
 ///
 /// - Since: Sprint 1
-@propertyWrapper public struct Rest<Parent, Value> where Parent: Codable, Value: Codable {
+@propertyWrapper public struct Rest<Parent, Value>: DynamicProperty where Parent: Codable, Value: Codable {
     /// The mutable reference to the wrapped property value.
-    private var _wrappedValue: RestMutableValueReference<Value>
+    @StateObject private var _wrappedValue: RestMutableValueReference<Value>
     /// The query associated with this wrapped property.
     private var query: RestQueryImpl<Parent, Value>
 
@@ -681,8 +681,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init(wrappedValue: Value, path: String, bearer: Bool = true) where Parent == Value {
-        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
-        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self))
+        self.__wrappedValue = StateObject(wrappedValue: RestMutableValueReference(value: wrappedValue))
+        self.query = RestQueryImpl(self.__wrappedValue.wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self))
     }
 
     /// Creates a *Rest* property wrapper instance.
@@ -702,8 +702,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true) where Parent == Value, ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible {
-        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
-        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self))
+        self.__wrappedValue = StateObject(wrappedValue: RestMutableValueReference(value: wrappedValue))
+        self.query = RestQueryImpl(self.__wrappedValue.wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self))
     }
 
     /// Creates a *Rest* property wrapper instance.
@@ -724,8 +724,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init(wrappedValue: Value, path: String, bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where Parent: ParentCodable, Parent.ChildCodable == Value {
-        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
-        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop))
+        self.__wrappedValue = StateObject(wrappedValue: RestMutableValueReference(value: wrappedValue))
+        self.query = RestQueryImpl(self.__wrappedValue.wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop))
     }
 
     /// Creates a *Rest* property wrapper instance.
@@ -747,8 +747,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
-        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
-        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
+        self.__wrappedValue = StateObject(wrappedValue: RestMutableValueReference(value: wrappedValue))
+        self.query = RestQueryImpl(self.__wrappedValue.wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
     }
 
     /// Implicitly used computed property for `@propertyWrapper`.
