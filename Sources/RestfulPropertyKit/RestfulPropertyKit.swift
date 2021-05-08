@@ -1309,13 +1309,13 @@ public func ->> <Query>(lhs: RestQueryResult<Query>, rhs: RestQueryResult<Query>
 /// The nested `nil` in `Binding` coalescing operator.
 ///
 /// - Since: Sprint 1
-infix operator ??
+infix operator ???
 
 /// The nested `nil` in `Binding` coalescing operator.
 ///
 /// Usage:
 /// ~~~
-/// let someBindingWithDefault = someBindingWithOptional ?? someDefaultValue
+/// let someBindingWithDefault = someBindingWithOptional ??? someDefaultValue
 /// ~~~
 ///
 /// - Parameters:
@@ -1328,7 +1328,7 @@ infix operator ??
 /// [Custom Operators](https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46)
 ///
 /// - Since: Sprint 1
-public func ?? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
+public func ??? <Value>(lhs: Binding<Value?>, rhs: Value) -> Binding<Value> {
     return Binding(get: {
         lhs.wrappedValue ?? rhs
     }, set: { value in
