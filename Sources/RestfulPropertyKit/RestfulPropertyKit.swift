@@ -26,6 +26,9 @@ import Security
 import Combine
 import SwiftUI
 
+/// Opt-in conformance for structures with no argument initializer.
+///
+/// - Since: Sprint 2
 public protocol NoArgInit {
     init()
 }
