@@ -26,6 +26,24 @@ import Security
 import Combine
 import SwiftUI
 
+/// Opt-in conformance for structures with no argument initializer.
+///
+/// Example:
+/// ~~~
+/// struct Account: Codable, NoArgInit {
+///     // The account email.
+///     var email: String = ""
+///     // The account password.
+///     var password: String = ""
+/// }
+/// ~~~
+///
+/// - Since: Sprint 2
+public protocol NoArgInit {
+    /// The required initializer with no argument.
+    init()
+}
+
 /// A type that can wrap a child *Codable* value into a representation of itself.
 ///
 /// Protocol *ParentCodable* can only be used as a generic constraint because it has
@@ -181,6 +199,7 @@ public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     ///
     /// - Since: Sprint 1
     public func update(with value: Value) {
+        internalDebugPrint("Update Internal Reference for: ", value)
         self.value = value
     }
 }
@@ -657,11 +676,46 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public var wrappedValue: Value {
-        get {
+        nonmutating get {
             _wrappedValue.value
         }
-        set {
+        nonmutating set {
             _wrappedValue.update(with: newValue)
+        }
+    }
+
+    /// Implicitly used computed property for `@propertyWrapper`.
+    ///
+    /// Provides access to the associated query. Visibility is set to `fileprivate` to restrict
+    /// query mutations.
+    ///
+    /// Usage:
+    /// ~~~
+    /// struct Fruit: Codable {
+    ///     let name: String
+    ///     let size: Int
+    ///     let color: String
+    /// }
+    ///
+    /// ...
+    ///
+    /// @Rest(path: "fruitoftheday") var fruit: Fruit = Fruit(name: "strawberry", size: 3, color: "red")
+    ///
+    /// ...
+    ///
+    /// print($fruit) // projectedValue (aka query) access
+    ///
+    /// print($fruit.projectedValue) // nested projectedValue (aka binding) access
+    /// print($fruit.name) // nested projectedValue (aka binding) property (aka property binding) access
+    /// ~~~
+    ///
+    /// - Since: Sprint 1
+    public var projectedValue: RestQueryImpl<Parent, Value> {
+        get {
+            query
+        }
+        set {
+            query = newValue
         }
     }
 
@@ -750,40 +804,89 @@ public struct RestBearerType: Codable {
         self._wrappedValue = RestMutableValueReference(value: wrappedValue)
         self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
     }
+}
 
-    /// Implicitly used computed property for `@propertyWrapper`.
-    ///
-    /// Provides access to the associated query. Visibility is set to `fileprivate` to restrict
-    /// query mutations.
+extension Rest where Value: NoArgInit {
+    /// Creates a *Rest* property wrapper instance.
     ///
     /// Usage:
     /// ~~~
-    /// struct Fruit: Codable {
-    ///     let name: String
-    ///     let size: Int
-    ///     let color: String
-    /// }
-    ///
-    /// ...
-    ///
-    /// @Rest(path: "fruitoftheday") var fruit: Fruit = Fruit(name: "strawberry", size: 3, color: "red")
-    ///
-    /// ...
-    ///
-    /// print($fruit) // projectedValue (aka query) access
-    ///
-    /// print($fruit.projectedValue) // nested projectedValue (aka binding) access
-    /// print($fruit.name) // nested projectedValue (aka binding) property (aka property binding) access
+    /// @Rest(path: "somePath") var someProp: SomeType
     /// ~~~
     ///
+    /// - Parameters:
+    ///   - path: The url request path component.
+    ///   - bearer: True if the bearer token should be send as part of the request.
+    ///
+    /// - Returns: A new *Rest* property wrapper instance.
+    ///
     /// - Since: Sprint 1
-    public var projectedValue: RestQueryImpl<Parent, Value> {
-        get {
-            query
-        }
-        set {
-            query = newValue
-        }
+    public init(path: String, bearer: Bool = true) where Parent == Value {
+        self._wrappedValue = RestMutableValueReference(value: Value.init())
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self))
+    }
+
+    /// Creates a *Rest* property wrapper instance.
+    ///
+    /// Usage:
+    /// ~~~
+    /// @Rest(path: "somePath", params: ["someKey": someValue]) var someProp: SomeType
+    /// ~~~
+    ///
+    /// - Parameters:
+    ///   - path: The url request path component.
+    ///   - params: The url request query parameter component.
+    ///   - bearer: True if the bearer token should be send as part of the request.
+    ///
+    /// - Returns: A new *Rest* property wrapper instance.
+    ///
+    /// - Since: Sprint 1
+    public init<ParamKey, ParamValue>(path: String, params: [ParamKey: ParamValue], bearer: Bool = true) where Parent == Value, ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible {
+        self._wrappedValue = RestMutableValueReference(value: Value.init())
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self))
+    }
+
+    /// Creates a *Rest* property wrapper instance.
+    ///
+    /// Usage:
+    /// ~~~
+    /// @Rest(path: "somePath", parent: SomeParentType.self, prop: \.somePropKey) var someProp: SomeType
+    /// ~~~
+    ///
+    /// - Parameters:
+    ///   - path: The url request path component.
+    ///   - bearer: True if the bearer token should be send as part of the request.
+    ///   - parent: The parent type conforming to the `ParentCodable` protocol.
+    ///   - prop: The property to be extracted from the parent type.
+    ///
+    /// - Returns: A new *Rest* property wrapper instance.
+    ///
+    /// - Since: Sprint 1
+    public init(path: String, bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where Parent: ParentCodable, Parent.ChildCodable == Value {
+        self._wrappedValue = RestMutableValueReference(value: Value.init())
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop))
+    }
+
+    /// Creates a *Rest* property wrapper instance.
+    ///
+    /// Usage:
+    /// ~~~
+    /// @Rest(path: "somePath", params: ["someKey": someValue], parent: SomeParentType.self, prop: \.somePropKey) var someProp: SomeType
+    /// ~~~
+    ///
+    /// - Parameters:
+    ///   - path: The url request path component.
+    ///   - params: The url request query parameter component.
+    ///   - bearer: True if the bearer token should be send as part of the request.
+    ///   - parent: The parent type conforming to the `ParentCodable` protocol.
+    ///   - prop: The property to be extracted from the parent type.
+    ///
+    /// - Returns: A new *Rest* property wrapper instance.
+    ///
+    /// - Since: Sprint 1
+    public init<ParamKey, ParamValue>(path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
+        self._wrappedValue = RestMutableValueReference(value: Value.init())
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
     }
 }
 
