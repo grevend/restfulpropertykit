@@ -659,10 +659,10 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public var wrappedValue: Value {
-        get {
+        nonmutating get {
             _wrappedValue.value
         }
-        set {
+        nonmutating set {
             _wrappedValue.update(with: newValue)
         }
     }
