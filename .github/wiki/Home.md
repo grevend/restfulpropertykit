@@ -27,17 +27,26 @@
 
 # Protocols
 
+  - [NoArgInit](https://github.com/grevend/restfulpropertykit/wiki/NoArgInit):
+    Opt-in conformance for structures with no argument initializer.
   - [ParentCodable](https://github.com/grevend/restfulpropertykit/wiki/ParentCodable):
     A type that can wrap a child *Codable* value into a representation of itself.
   - [ParentCodableDynamicDispatch](https://github.com/grevend/restfulpropertykit/wiki/ParentCodableDynamicDispatch):
     ParentCodableDynamicDispatch is a weakly typed wrapper to dispatch wrap method
     calls to a *ParentCodable* object.
+  - [RestRequestProvider](https://github.com/grevend/restfulpropertykit/wiki/RestRequestProvider):
+    The protocol used for all *REST* request provider implementations.
   - [RestQuery](https://github.com/grevend/restfulpropertykit/wiki/RestQuery):
     The protocol all rest query implementations should conform to.
 
+# Global Functions
+
+  - [\_restMock(with:​block:​)](https://github.com/grevend/restfulpropertykit/wiki/_restMock\(with:block:\)):
+    \[EXPERIMENTAL\] Mocks all requests made in the block closure using the given *RestRequestProvider*.
+
 # Operators
 
-  - [??](https://github.com/grevend/restfulpropertykit/wiki/%3F%3F):
+  - [???](https://github.com/grevend/restfulpropertykit/wiki/%3F%3F%3F):
     The nested `nil` in `Binding` coalescing operator.
   - [\<-](https://github.com/grevend/restfulpropertykit/wiki/%3C-):
     The query post new value operator.
@@ -49,3 +58,7 @@
     The query get request operator.
   - [\<\!](https://github.com/grevend/restfulpropertykit/wiki/%3C!):
     The query post currently wrapped value operator.
+
+# Extensions
+
+  - [URLSession](https://github.com/grevend/restfulpropertykit/wiki/URLSession)

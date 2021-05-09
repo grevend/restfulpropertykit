@@ -53,7 +53,7 @@ public let params: [String: String]
 Returns a constructed URL from its constituent parts.
 
 ``` swift
-public func url(params: Bool = true) -> URL 
+public func url(params: Bool = true) -> URL? 
 ```
 
 > 

@@ -18,9 +18,18 @@
 <details>
 <summary>Protocols</summary>
 
+  - [NoArgInit](https://github.com/grevend/restfulpropertykit/wiki/NoArgInit)
   - [ParentCodable](https://github.com/grevend/restfulpropertykit/wiki/ParentCodable)
   - [ParentCodableDynamicDispatch](https://github.com/grevend/restfulpropertykit/wiki/ParentCodableDynamicDispatch)
   - [RestQuery](https://github.com/grevend/restfulpropertykit/wiki/RestQuery)
+  - [RestRequestProvider](https://github.com/grevend/restfulpropertykit/wiki/RestRequestProvider)
+
+</details>
+
+<details>
+<summary>Global Functions</summary>
+
+  - [\_restMock(with:block:)](https://github.com/grevend/restfulpropertykit/wiki/_restMock\(with:block:\))
 
 </details>
 
@@ -32,6 +41,13 @@
   - [\<\!](https://github.com/grevend/restfulpropertykit/wiki/%3C!)
   - [\<-](https://github.com/grevend/restfulpropertykit/wiki/%3C-)
   - [\>?](https://github.com/grevend/restfulpropertykit/wiki/%3E%3F)
-  - [??](https://github.com/grevend/restfulpropertykit/wiki/%3F%3F)
+  - [???](https://github.com/grevend/restfulpropertykit/wiki/%3F%3F%3F)
+
+</details>
+
+<details>
+<summary>Extensions</summary>
+
+  - [URLSession](https://github.com/grevend/restfulpropertykit/wiki/URLSession)
 
 </details>

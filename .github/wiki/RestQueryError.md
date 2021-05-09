@@ -38,6 +38,14 @@ The construction of the request URL failed.
 case url(URLError)
 ```
 
+### `urlValidation`
+
+The validation of the request URL failed.
+
+``` swift
+case urlValidation
+```
+
 ### `urlReponse`
 
 The request result did not contain a response.
@@ -76,6 +84,14 @@ The encoding of the query content failed.
 
 ``` swift
 case encode(EncodingError)
+```
+
+### `cancelled`
+
+The query request was cancelled.
+
+``` swift
+case cancelled
 ```
 
 ### `other`

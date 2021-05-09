@@ -17,6 +17,30 @@ Protocol *ParentCodable* can only be used as a generic constraint because it has
 
 `Codable`, [`ParentCodableDynamicDispatch`](https://github.com/grevend/restfulpropertykit/wiki/ParentCodableDynamicDispatch)
 
+## Default Implementations
+
+### `dynamicWrap(child:)`
+
+Default implementation for `ParentCodableDynamicDispatch.dynamicWrap(child:​ Any)`.
+
+``` swift
+static func dynamicWrap(child: Any) -> Any 
+```
+
+Provided implicit implementation:
+
+``` 
+static func dynamicWrap(child: Any) -> Any {
+    self.wrap(child: child as! ChildCodable)
+}
+```
+
+> 
+
+#### Parameters
+
+  - child: The value to be wrapped by a parent type implementing *ParentCodable*.
+
 ## Requirements
 
 ### ChildCodable
