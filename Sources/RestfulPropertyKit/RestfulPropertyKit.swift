@@ -667,6 +667,41 @@ public struct RestBearerType: Codable {
         }
     }
 
+    /// Implicitly used computed property for `@propertyWrapper`.
+    ///
+    /// Provides access to the associated query. Visibility is set to `fileprivate` to restrict
+    /// query mutations.
+    ///
+    /// Usage:
+    /// ~~~
+    /// struct Fruit: Codable {
+    ///     let name: String
+    ///     let size: Int
+    ///     let color: String
+    /// }
+    ///
+    /// ...
+    ///
+    /// @Rest(path: "fruitoftheday") var fruit: Fruit = Fruit(name: "strawberry", size: 3, color: "red")
+    ///
+    /// ...
+    ///
+    /// print($fruit) // projectedValue (aka query) access
+    ///
+    /// print($fruit.projectedValue) // nested projectedValue (aka binding) access
+    /// print($fruit.name) // nested projectedValue (aka binding) property (aka property binding) access
+    /// ~~~
+    ///
+    /// - Since: Sprint 1
+    public var projectedValue: RestQueryImpl<Parent, Value> {
+        get {
+            query
+        }
+        set {
+            query = newValue
+        }
+    }
+
     /// Creates a *Rest* property wrapper instance.
     ///
     /// Usage:
@@ -751,41 +786,6 @@ public struct RestBearerType: Codable {
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
         self._wrappedValue = RestMutableValueReference(value: wrappedValue)
         self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
-    }
-
-    /// Implicitly used computed property for `@propertyWrapper`.
-    ///
-    /// Provides access to the associated query. Visibility is set to `fileprivate` to restrict
-    /// query mutations.
-    ///
-    /// Usage:
-    /// ~~~
-    /// struct Fruit: Codable {
-    ///     let name: String
-    ///     let size: Int
-    ///     let color: String
-    /// }
-    ///
-    /// ...
-    ///
-    /// @Rest(path: "fruitoftheday") var fruit: Fruit = Fruit(name: "strawberry", size: 3, color: "red")
-    ///
-    /// ...
-    ///
-    /// print($fruit) // projectedValue (aka query) access
-    ///
-    /// print($fruit.projectedValue) // nested projectedValue (aka binding) access
-    /// print($fruit.name) // nested projectedValue (aka binding) property (aka property binding) access
-    /// ~~~
-    ///
-    /// - Since: Sprint 1
-    public var projectedValue: RestQueryImpl<Parent, Value> {
-        get {
-            query
-        }
-        set {
-            query = newValue
-        }
     }
 }
 
