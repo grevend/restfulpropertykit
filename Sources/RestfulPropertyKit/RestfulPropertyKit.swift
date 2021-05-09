@@ -137,19 +137,10 @@ public extension ParentCodable {
 ///
 /// - Since: Sprint 1
 public class RestValueReference<Value>: ObservableObject {
-    @Published fileprivate(set) var wrappedValue: Value?
-
     /// The referenced value. Visibility is set to `fileprivate` to allow the implementation of
     /// `RestMutableValueReference<Value>` while restricting other subclasses from modifying
     /// the referenced value.
-    fileprivate(set) var value: Value {
-        get {
-            self.wrappedValue!
-        }
-        set {
-            self.wrappedValue = newValue
-        }
-    }
+    @Published fileprivate(set) var value: Value
 
     /// Returns a new instance of *RestValueReference* containing a value of type `Value`.
     ///
@@ -159,11 +150,7 @@ public class RestValueReference<Value>: ObservableObject {
     ///
     /// - Since: Sprint 1
     public init(value: Value) {
-        self.wrappedValue = value
-    }
-
-    fileprivate init() {
-        self.wrappedValue = nil
+        self.value = value
     }
 }
 
@@ -194,7 +181,7 @@ public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     ///
     /// - Since: Sprint 1
     public func update(with value: Value) {
-        self.wrappedValue = value
+        self.value = value
         internalDebugPrint("Update Internal Reference for: ", value)
         self.objectWillChange.send()
     }
@@ -644,13 +631,9 @@ public struct RestBearerType: Codable {
 /// - Since: Sprint 1
 @propertyWrapper public struct Rest<Parent, Value>: DynamicProperty where Parent: Codable, Value: Codable {
     /// The mutable reference to the wrapped property value.
-    @StateObject private var _wrappedValue = RestMutableValueReference<Value>()
+    private var _wrappedValue: RestMutableValueReference<Value>
     /// The query associated with this wrapped property.
-    private lazy var query: RestQueryImpl<Parent, Value> = {
-        RestQueryImpl(self._wrappedValue, self.queryMetadata)
-    }()
-
-    private var queryMetadata: RestQueryMetadata<Parent, Value>
+    private var query: RestQueryImpl<Parent, Value>
 
     /// Implicitly used computed property for `@propertyWrapper`.
     ///
@@ -700,8 +683,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init(wrappedValue: Value, path: String, bearer: Bool = true) where Parent == Value {
-        self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self)
-        self._wrappedValue.update(with: wrappedValue)
+        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self))
     }
 
     /// Creates a *Rest* property wrapper instance.
@@ -721,8 +704,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true) where Parent == Value, ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible {
-        self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self)
-        self._wrappedValue.update(with: wrappedValue)
+        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self))
     }
 
     /// Creates a *Rest* property wrapper instance.
@@ -743,8 +726,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init(wrappedValue: Value, path: String, bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where Parent: ParentCodable, Parent.ChildCodable == Value {
-        self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop)
-        self._wrappedValue.update(with: wrappedValue)
+        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop))
     }
 
     /// Creates a *Rest* property wrapper instance.
@@ -766,8 +749,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
-        self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop)
-        self._wrappedValue.update(with: wrappedValue)
+        self._wrappedValue = RestMutableValueReference(value: wrappedValue)
+        self.query = RestQueryImpl(self._wrappedValue, RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop))
     }
 
     /// Implicitly used computed property for `@propertyWrapper`.
@@ -797,8 +780,11 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public var projectedValue: RestQueryImpl<Parent, Value> {
-        mutating get {
+        get {
             query
+        }
+        set {
+            query = newValue
         }
     }
 }
