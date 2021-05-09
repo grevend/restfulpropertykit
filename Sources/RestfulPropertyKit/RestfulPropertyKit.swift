@@ -40,6 +40,7 @@ import SwiftUI
 ///
 /// - Since: Sprint 2
 public protocol NoArgInit {
+    /// The required initializer with no argument.
     init()
 }
 
