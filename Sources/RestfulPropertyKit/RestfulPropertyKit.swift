@@ -646,25 +646,11 @@ public struct RestBearerType: Codable {
     /// The mutable reference to the wrapped property value.
     @StateObject private var _wrappedValue = RestMutableValueReference<Value>()
     /// The query associated with this wrapped property.
-    private var query: LazyQueryConstruction!
+    private lazy var query: RestQueryImpl<Parent, Value> = {
+        RestQueryImpl(self._wrappedValue, self.queryMetadata)
+    }()
 
     private var queryMetadata: RestQueryMetadata<Parent, Value>
-
-    /*private lazy var query: RestQueryImpl<Parent, Value> = {
-     RestQueryImpl(self._wrappedValue, self.queryMetadata)
-     }()*/
-
-    private class LazyQueryConstruction {
-        private let constructor: (() -> RestQueryImpl<Parent, Value>)
-
-        init(constructor: @escaping () -> RestQueryImpl<Parent, Value>) {
-            self.constructor = constructor
-        }
-
-        fileprivate lazy var constructed: RestQueryImpl<Parent, Value> = {
-            self.constructor()
-        }()
-    }
 
     /// Implicitly used computed property for `@propertyWrapper`.
     ///
@@ -715,7 +701,6 @@ public struct RestBearerType: Codable {
     /// - Since: Sprint 1
     public init(wrappedValue: Value, path: String, bearer: Bool = true) where Parent == Value {
         self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: Parent.self, prop: \Value.self)
-        self.query = LazyQueryConstruction(constructor: self.constructQuery)
         self._wrappedValue.update(with: wrappedValue)
     }
 
@@ -737,7 +722,6 @@ public struct RestBearerType: Codable {
     /// - Since: Sprint 1
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true) where Parent == Value, ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible {
         self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: Parent.self, prop: \Value.self)
-        self.query = LazyQueryConstruction(constructor: self.constructQuery)
         self._wrappedValue.update(with: wrappedValue)
     }
 
@@ -760,7 +744,6 @@ public struct RestBearerType: Codable {
     /// - Since: Sprint 1
     public init(wrappedValue: Value, path: String, bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where Parent: ParentCodable, Parent.ChildCodable == Value {
         self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path), bearer: bearer, parent: parent, prop: prop)
-        self.query = LazyQueryConstruction(constructor: self.constructQuery)
         self._wrappedValue.update(with: wrappedValue)
     }
 
@@ -784,12 +767,7 @@ public struct RestBearerType: Codable {
     /// - Since: Sprint 1
     public init<ParamKey, ParamValue>(wrappedValue: Value, path: String, params: [ParamKey: ParamValue], bearer: Bool = true, parent: Parent.Type, prop: KeyPath<Parent, Value>) where ParamKey: CustomStringConvertible, ParamValue: CustomStringConvertible, Parent: ParentCodable, Parent.ChildCodable == Value {
         self.queryMetadata = RestQueryMetadata(urlComponents: RestURLComponents(path: path, params: Dictionary(uniqueKeysWithValues: params.map { (key: $0.key.description, value: $0.value.description) })), bearer: bearer, parent: parent, prop: prop)
-        self.query = LazyQueryConstruction(constructor: self.constructQuery)
         self._wrappedValue.update(with: wrappedValue)
-    }
-
-    private func constructQuery() -> RestQueryImpl<Parent, Value> {
-        RestQueryImpl(self._wrappedValue, self.queryMetadata)
     }
 
     /// Implicitly used computed property for `@propertyWrapper`.
@@ -819,8 +797,8 @@ public struct RestBearerType: Codable {
     ///
     /// - Since: Sprint 1
     public var projectedValue: RestQueryImpl<Parent, Value> {
-        get {
-            query.constructed
+        mutating get {
+            query
         }
     }
 }
