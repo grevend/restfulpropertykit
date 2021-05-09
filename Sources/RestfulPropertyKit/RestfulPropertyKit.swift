@@ -28,6 +28,16 @@ import SwiftUI
 
 /// Opt-in conformance for structures with no argument initializer.
 ///
+/// Example:
+/// ~~~
+/// struct Account: Codable, NoArgInit {
+///     // The account email.
+///     var email: String = ""
+///     // The account password.
+///     var password: String = ""
+/// }
+/// ~~~
+///
 /// - Since: Sprint 2
 public protocol NoArgInit {
     init()
