@@ -26,7 +26,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#classes">Classes</a></li><li><a href="#structures">Structures</a></li><li><a href="#enumerations">Enumerations</a></li><li><a href="#protocols">Protocols</a></li><li><a href="#operators">Operators</a></li></ol>
+            <ol><li><a href="#classes">Classes</a></li><li><a href="#structures">Structures</a></li><li><a href="#enumerations">Enumerations</a></li><li><a href="#protocols">Protocols</a></li><li><a href="#functions">Functions</a></li><li><a href="#operators">Operators</a></li><li><a href="#extensions">Extensions</a></li></ol>
         </div>
     </nav>
 
@@ -152,6 +152,15 @@ final and the value setter in <em>RestValueReference</em> is <em>fileprivate</em
         <h2>Protocols</h2>
         <dl>
             <dt class="protocol">
+    <a href="https://doc.restfulpropertykit.grevend.dev/NoArgInit" title="protocol - NoArgInit">
+        NoArg​Init
+    </a>
+</dt>
+<dd>
+    <p>Opt-in conformance for structures with no argument initializer.</p>
+
+</dd>
+<dt class="protocol">
     <a href="https://doc.restfulpropertykit.grevend.dev/ParentCodable" title="protocol - ParentCodable">
         Parent​Codable
     </a>
@@ -171,6 +180,15 @@ calls to a <em>ParentCodable</em> object.</p>
 
 </dd>
 <dt class="protocol">
+    <a href="https://doc.restfulpropertykit.grevend.dev/RestRequestProvider" title="protocol - RestRequestProvider">
+        Rest​Request​Provider
+    </a>
+</dt>
+<dd>
+    <p>The protocol used for all <em>REST</em> request provider implementations.</p>
+
+</dd>
+<dt class="protocol">
     <a href="https://doc.restfulpropertykit.grevend.dev/RestQuery" title="protocol - RestQuery">
         Rest​Query
     </a>
@@ -181,12 +199,26 @@ calls to a <em>ParentCodable</em> object.</p>
 </dd>
         </dl>
     </section>
+    <section id="functions">
+        <h2>Functions</h2>
+        <dl>
+            <dt class="function">
+    <a href="https://doc.restfulpropertykit.grevend.dev/_restMock(with:block:)" title="function - _restMock(with:block:)">
+        _rest​Mock(with:​block:​)
+    </a>
+</dt>
+<dd>
+    <p>[EXPERIMENTAL] Mocks all requests made in the block closure using the given <em>RestRequestProvider</em>.</p>
+
+</dd>
+        </dl>
+    </section>
     <section id="operators">
         <h2>Operators</h2>
         <dl>
             <dt class="operator">
-    <a href="https://doc.restfulpropertykit.grevend.dev/%3F%3F" title="operator - ??">
-        ??
+    <a href="https://doc.restfulpropertykit.grevend.dev/%3F%3F%3F" title="operator - ???">
+        ???
     </a>
 </dt>
 <dd>
@@ -240,13 +272,21 @@ calls to a <em>ParentCodable</em> object.</p>
 </dd>
         </dl>
     </section>
-
+<section id="extensions">
+    <h2>Extensions</h2>
+    <dl>
+    <dt class="extension">
+    <a href="https://doc.restfulpropertykit.grevend.dev/URLSession">URLSession</a>
+</dt>
+<dd></dd>
+    </dl>
+<section>
         </article>
     </main>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-27T11:30:33+0000">April 27, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-05-09T17:05:57+0000">May 9, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>

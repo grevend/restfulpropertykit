@@ -26,7 +26,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#implementations">Implementations</a><ul><li class="function"><a href="#-&gt;&gt;">RestQueryResult&lt;Query&gt; -&gt;&gt; RestQueryResult&lt;Query&gt; where Query: RestQuery</a></li></ul></li></ol>
+            <ol/>
         </div>
     </nav>
 
@@ -50,78 +50,13 @@
 
 </aside>
 </div>
-    <section id="implementations">
-        <h2>Implementations</h2>
-        <div role="article" class="function" id="->>">
-    <h3>
-      RestQueryResult&lt;Query&gt; -&gt;&gt; RestQueryResult&lt;Query&gt;
-      <small>where Query: RestQuery</small>
-    </h3>
-    <div class="declaration">
-<pre class="highlight"><code><span class="keyword">func</span> -&gt;&gt; &lt;<span class="variable">Query</span>&gt;(<span class="variable">lhs</span>: <span class="type">RestQueryResult</span>&lt;<span class="type">Query</span>&gt;, <span class="variable">rhs</span>: <span class="type">RestQueryResult</span>&lt;<span class="type">Query</span>&gt;) -&gt; <span class="type">RestQueryResult</span>&lt;<span class="type">Query</span>&gt; <span class="keyword">where</span> <span class="type">Query</span>: <span class="type">RestQuery</span> </code></pre>
-</div>
-<div class="summary" role="doc-abstract">
-    <p>The query results depdents on operator.</p>
 
-</div>
-<div class="discussion">
-    <p>Joins two queries on the success of the left-hand side. If the operation succeeds, the right-hand side is triggered.</p>
-
-<p>Usage:</p>
-
-<html><body><pre class="highlight"><code>(<span class="variable">$someQuery</span> &lt;- <span class="variable">someValue</span> -&gt;&gt; <span class="variable">$someDependentQuery</span>&lt;!).<span class="variable">success</span> {
-    ...
-}
-</code></pre></body></html>
-<aside class="Requires">
-    <p>The query type <code>Query</code> must conform to the <code>RestQuery</code> protocol.</p>
-
-</aside>
-<h3>Reference</h3>
-
-<p><a href="https://docs.swift.org/swift-book/LanguageGuide/AdvancedOperators.html#ID46">Custom Operators</a></p>
-
-<aside class="Since">
-    <p>Sprint 1</p>
-
-</aside>
-</div>
-<h4>Parameters</h4>
-
-<table class="parameters">
-  <thead hidden>
-  <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-  </tr>
-  </thead>
-  <tbody>
-    <tr>
-    <th>lhs</th>
-    <td><code class="type">Rest​Query​Result&lt;Query&gt;</code></td>
-    <td><p>The query instance used to make the dependable request.</p>
-</td>
-</tr>
-<tr>
-    <th>rhs</th>
-    <td><code class="type">Rest​Query​Result&lt;Query&gt;</code></td>
-    <td><p>The dependent query that's triggered on the success of the left-hand side.</p>
-</td>
-</tr>
-  </tbody>
-</table>
-  <h4>Returns</h4>
-  <p>A future that will resolve to the new value or an error.</p>
-
-</div>
-    </section>
         </article>
     </main>
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-27T11:30:33+0000">April 27, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-05-09T17:05:56+0000">May 9, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestfulPropertyKit - _restMock(with:block:)</title>
+    <link rel="stylesheet" type="text/css" href="https://doc.restfulpropertykit.grevend.dev/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="https://doc.restfulpropertykit.grevend.dev/">
+            <strong>
+                RestfulPropertyKit
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol/>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+<small>Function</small>
+<span class="name">_rest​Mock(with:​block:​)</span>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">func</span> <span class="function">_restMock</span>&lt;<span class="variable">Result</span>&gt;(<span class="variable">with</span> <span class="variable">provider</span>: <span class="type">RestRequestProvider</span>, <span class="variable">block</span>: (() -&gt; <span class="type">Result</span>)) -&gt; <span class="type">Result</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>[EXPERIMENTAL] Mocks all requests made in the block closure using the given <em>RestRequestProvider</em>.</p>
+
+</div>
+<div class="discussion">
+    <p>Usage:</p>
+
+<html><body><pre class="highlight"><code><span class="variable">restMock</span>(<span class="variable">someMockProvider</span>) {
+    <span class="variable">someQuery</span> &lt;- <span class="variable">someValue</span>
+}
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>provider</th>
+    <td><code class="type">Rest​Request​Provider</code></td>
+    <td><p>The mock request provider.</p>
+</td>
+</tr>
+<tr>
+    <th>block</th>
+    <td><code class="type">(() -&gt; Result)</code></td>
+    <td><p>The computation using mocked requests.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>The result of the computation inside of the closure.</p>
+
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-05-09T17:05:56+0000">May 9, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>

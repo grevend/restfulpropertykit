@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestfulPropertyKit - RestRequestProvider</title>
+    <link rel="stylesheet" type="text/css" href="https://doc.restfulpropertykit.grevend.dev/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="https://doc.restfulpropertykit.grevend.dev/">
+            <strong>
+                RestfulPropertyKit
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol><li><a href="#requirements">Requirements</a><ul><li class="function"><a href="#restrequestprovider.restrequestpublisher(for:)">rest​Request​Publisher(for:​)</a></li></ul></li></ol>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+    <small>Protocol</small>
+    <code class="name">Rest​Request​Provider</code>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">protocol</span> <span class="type">RestRequestProvider</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The protocol used for all <em>REST</em> request provider implementations.</p>
+
+</div>
+<div class="discussion">
+    <aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+
+
+
+
+    <section id="requirements">
+        <h2>Requirements</h2>
+
+        <div role="article" class="function" id="restrequestprovider.restrequestpublisher(for:)">
+    <h3>
+        <code>rest​Request​Publisher(for:​)</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">func</span> <span class="function">restRequestPublisher</span>(<span class="variable">for</span> <span class="variable">request</span>: <span class="type">URLRequest</span>) -&gt; <span class="type">AnyPublisher</span>&lt;<span class="type">URLSession</span>.<span class="type">DataTaskPublisher</span>.<span class="type">Output</span>, <span class="type">URLError</span>&gt;</code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Returns a publisher that wraps a URL session for a given URL request.</p>
+
+</div>
+<div class="discussion">
+    <p>The publisher publishes data when the task completes, or terminates if the task fails with an error.</p>
+
+<aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+<h4>Parameters</h4>
+
+<table class="parameters">
+  <thead hidden>
+  <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr>
+    <th>request</th>
+    <td><code class="type">URLRequest</code></td>
+    <td><p>The URL request for which to create a request.</p>
+</td>
+</tr>
+  </tbody>
+</table>
+  <h4>Returns</h4>
+  <p>A publisher that wraps a data task for the URL request.</p>
+
+</div>
+    </section>
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-05-09T17:05:57+0000">May 9, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>

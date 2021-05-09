@@ -26,7 +26,7 @@
     <nav>
         <div class="wrapper">
             <h2>On This Page</h2>
-            <ol><li><a href="#properties">Properties</a><ul><li class="variable"><a href="#restconfiguration.host">host</a></li></ul></li></ol>
+            <ol><li><a href="#properties">Properties</a><ul><li class="variable"><a href="#restconfiguration.host">host</a></li><li class="variable"><a href="#restconfiguration.timeoutinterval">timeout​Interval</a></li><li class="variable"><a href="#restconfiguration.debug">debug</a></li><li class="variable"><a href="#restconfiguration.requestprovider">request​Provider</a></li></ul></li></ol>
         </div>
     </nav>
 
@@ -70,6 +70,48 @@
 
 </div>
 </div>
+<div role="article" class="variable" id="restconfiguration.timeoutinterval">
+    <h3>
+        <code>timeout​Interval</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> <span class="variable">timeoutInterval</span>: <span class="type">TimeInterval</span> = <span class="number literal">10000</span></code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The request timeout interval.</p>
+
+</div>
+</div>
+<div role="article" class="variable" id="restconfiguration.debug">
+    <h3>
+        <code>debug</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> <span class="variable">debug</span>: <span class="type">Bool</span> = <span class="keyword">false</span></code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Is debug session?</p>
+
+</div>
+</div>
+<div role="article" class="variable" id="restconfiguration.requestprovider">
+    <h3>
+        <code>request​Provider</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">var</span> <span class="variable">requestProvider</span>: <span class="type">RestRequestProvider</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The default request provider (<em>URLSession.shared</em>) or a mocked variation.</p>
+
+</div>
+<div class="discussion">
+    <aside class="Since">
+    <p>Sprint 1</p>
+
+</aside>
+</div>
+</div>
     </section>
 
 
@@ -79,7 +121,7 @@
 
     <footer>
         <p>
-    Generated on <time datetime="2021-04-27T11:30:33+0000">April 27, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+    Generated on <time datetime="2021-05-09T17:05:57+0000">May 9, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
 </p>
     </footer>
 </body>

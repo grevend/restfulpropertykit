@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestfulPropertyKit - NoArgInit</title>
+    <link rel="stylesheet" type="text/css" href="https://doc.restfulpropertykit.grevend.dev/all.css" media="all" />
+</head>
+<body>
+    <header>
+        <a href="https://doc.restfulpropertykit.grevend.dev/">
+            <strong>
+                RestfulPropertyKit
+            </strong>
+            <span>Documentation</span>
+        </a>
+        <sup>Beta</sup>
+    </header>
+
+    <!--
+    <form class="search">
+        <input type="search" placeholder="Search" />
+    </form>
+    -->
+
+    <nav>
+        <div class="wrapper">
+            <h2>On This Page</h2>
+            <ol><li><a href="#requirements">Requirements</a><ul><li class="initializer"><a href="#noarginit.init()">init()</a></li></ul></li></ol>
+        </div>
+    </nav>
+
+    <main>
+        <article>
+            <h1>
+    <small>Protocol</small>
+    <code class="name">NoArg​Init</code>
+</h1>
+
+<div class="declaration">
+<pre class="highlight"><code><span class="keyword">public</span> <span class="keyword">protocol</span> <span class="type">NoArgInit</span> </code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>Opt-in conformance for structures with no argument initializer.</p>
+
+</div>
+<div class="discussion">
+    <p>Example:</p>
+
+<html><body><pre class="highlight"><code><span class="keyword">struct</span> <span class="type">Account</span>: <span class="type">Codable</span>, <span class="type">NoArgInit</span> {
+    <span class="comment">// The account email.</span>
+    <span class="keyword">var</span> <span class="variable">email</span>: <span class="type">String</span> = <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>
+    <span class="comment">// The account password.</span>
+    <span class="keyword">var</span> <span class="variable">password</span>: <span class="type">String</span> = <span class="string literal">"</span><span class="string literal"/><span class="string literal">"</span>
+}
+</code></pre></body></html>
+<aside class="Since">
+    <p>Sprint 2</p>
+
+</aside>
+</div>
+
+
+
+
+    <section id="requirements">
+        <h2>Requirements</h2>
+
+        <div role="article" class="initializer" id="noarginit.init()">
+    <h3>
+        <code>init()</code>
+    </h3>
+    <div class="declaration">
+<pre class="highlight"><code><span class="keyword">init</span>()</code></pre>
+</div>
+<div class="summary" role="doc-abstract">
+    <p>The required initializer with no argument.</p>
+
+</div>
+</div>
+    </section>
+        </article>
+    </main>
+
+    <footer>
+        <p>
+    Generated on <time datetime="2021-05-09T17:05:57+0000">May 9, 2021</time> using <a href="https://github.com/SwiftDocOrg/swift-doc">swift-doc</a> <span class="version">1.0.0-beta.6</span>.
+</p>
+    </footer>
+</body>
+</html>
