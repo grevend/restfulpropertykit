@@ -140,11 +140,11 @@ public extension ParentCodable {
 /// property wrapper to internal logic, requiring a reference to the value even if it is a struct or enum.
 ///
 /// - Since: Sprint 1
-public class RestValueReference<Value>: ObservableObject {
+public class RestValueReference<Value> {
     /// The referenced value. Visibility is set to `fileprivate` to allow the implementation of
     /// `RestMutableValueReference<Value>` while restricting other subclasses from modifying
     /// the referenced value.
-    @Published fileprivate(set) var value: Value
+    fileprivate(set) var value: Value
 
     /// Returns a new instance of *RestValueReference* containing a value of type `Value`.
     ///
@@ -185,9 +185,8 @@ public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     ///
     /// - Since: Sprint 1
     public func update(with value: Value) {
-        self.value = value
         internalDebugPrint("Update Internal Reference for: ", value)
-        self.objectWillChange.send()
+        self.value = value
     }
 }
 
@@ -633,7 +632,7 @@ public struct RestBearerType: Codable {
 /// - Requires: The parent type `Parent` and the value type `Value` must conform to protocol `Codable`.
 ///
 /// - Since: Sprint 1
-@propertyWrapper public struct Rest<Parent, Value>: DynamicProperty where Parent: Codable, Value: Codable {
+@propertyWrapper public struct Rest<Parent, Value> where Parent: Codable, Value: Codable {
     /// The mutable reference to the wrapped property value.
     private var _wrappedValue: RestMutableValueReference<Value>
     /// The query associated with this wrapped property.
