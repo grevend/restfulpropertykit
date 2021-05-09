@@ -182,6 +182,7 @@ public final class RestMutableValueReference<Value>: RestValueReference<Value> {
     /// - Since: Sprint 1
     public func update(with value: Value) {
         self.value = value
+        internalDebugPrint("Update Internal Reference for: ", value)
         self.objectWillChange.send()
     }
 }
