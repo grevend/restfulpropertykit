@@ -1452,6 +1452,11 @@ public final class RestConfiguration {
     public static var host: String = ""
     /// The request timeout interval.
     public static var timeoutInterval: TimeInterval = 10000
+
+    public static var dateEncodingStrategy: JSONEncoder.DateEncodingStrategy = .deferredToDate
+
+    public static var dateDecodingStrategy: JSONDecoder.DateDecodingStrategy = .deferredToDate
+
     /// Is debug session?
     public static var debug: Bool = false
     /// Should the requests be mocked?
@@ -1793,12 +1798,15 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         urlRequest.httpMethod = "GET"
         internalDebugPrint("Http Method: ", urlRequest.httpMethod)
 
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = RestConfiguration.dateDecodingStrategy
+
         return RestConfiguration.requestProvider.restRequestPublisher(for: urlRequest)
             .map {
                 internalDebugPrint("Fetched Data: ", String(decoding: $0.data, as: UTF8.self))
                 return $0.data
             }
-            .decode(type: metadata.parent, decoder: JSONDecoder())
+            .decode(type: metadata.parent, decoder: decoder)
             .mapError { error in
                 switch error {
                 case let decodeError as DecodingError:
@@ -1840,7 +1848,9 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
 
                 if !bearer {
                     do {
-                        let token = try JSONDecoder().decode(RestBearerToken.self, from: data)
+                        let decoder = JSONDecoder()
+                        decoder.dateDecodingStrategy = RestConfiguration.dateDecodingStrategy
+                        let token = try decoder.decode(RestBearerToken.self, from: data)
 
                         internalDebugPrint("Received Bearer Token: ", token.value)
 
@@ -1891,7 +1901,9 @@ public final class RestQueryImpl<Parent, Value>: RestQuery where Parent: Codable
         internalDebugPrint("Http Method: ", urlRequest.httpMethod)
 
         do {
-            try urlRequest.httpBody = JSONEncoder().encode(body)
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = RestConfiguration.dateEncodingStrategy
+            try urlRequest.httpBody = encoder.encode(body)
 
             if let body = urlRequest.httpBody {
                 internalDebugPrint("Http Body: ", String(decoding: body, as: UTF8.self))
